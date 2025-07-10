@@ -136,6 +136,8 @@ public class PlayerController : MonoBehaviour
 
             isPlayable = true;
             GameManager.Instance.myCurrentPlayer.isPlayable = false;
+            GameManager.Instance.myCurrentMonster = null;
+
             if (!GameManager.Instance.myCurrentPlayer.isOrigin)
             {
                 GameManager.Instance.myCurrentPlayer.Death();
@@ -581,10 +583,9 @@ public class PlayerController : MonoBehaviour
             m_animator.SetBool("IdleBlock", false);
         }
         */
-        MonsterAttack();
     }
 
-    void MonsterAttack()
+    void AIUpdate()
     {
         switchTime += Time.deltaTime;
         m_timeSinceAttack += Time.deltaTime;
@@ -595,11 +596,19 @@ public class PlayerController : MonoBehaviour
 
         if (aPlayerDetected && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>())
         {
-            //Debug.Log("detected");
-            ChangeState<PlayerRunState>();
+            if (GameManager.Instance.myCurrentMonster is null)
+            {
+                GameManager.Instance.myCurrentMonster = this;
+                //Debug.Log("detected");
+                ChangeState<PlayerRunState>();
+            }
             //m_delayToIdle = 0.05f;
         } else if (!aPlayerDetected && !IsInState<PlayerIdleState>())
         {
+            if (GameManager.Instance.myCurrentMonster == this)
+            {
+                GameManager.Instance.myCurrentMonster = null;
+            }
             //Debug.Log("not player");
             ChangeState<PlayerIdleState>();
         }
@@ -613,6 +622,10 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("run");
             if (!aPlayerDetected)
             {
+                if (GameManager.Instance.myCurrentMonster == this)
+                {
+                    GameManager.Instance.myCurrentMonster = null;
+                }
                 ChangeState<PlayerIdleState>();
                 return;
             }
@@ -652,6 +665,11 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("run");
             if (!aPlayerDetected)
             {
+                if (GameManager.Instance.myCurrentMonster == this)
+                {
+                    GameManager.Instance.myCurrentMonster = null;
+                }
+
                 ChangeState<PlayerIdleState>();
                 return;
             }
