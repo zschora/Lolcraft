@@ -39,10 +39,10 @@ public class PlayerController : MonoBehaviour {
     public float                min_hp_to_takeover = 1000;
     public float                attackCooldown = 1f;
     public bool                 isOrigin = false;
-    public float                block_time = 0.3f;
-    public float                block_cooldown = 0.3f;
+    public float                block_time = 0.2f;
 
     private bool                isRightOriented = true;
+    private float               lastAttackTime = 0f;
 
     public bool IsGrounded
     {
@@ -422,10 +422,12 @@ public class PlayerController : MonoBehaviour {
     {
         if (IsInState<PlayerIdleState>())
         {
+            Debug.Log("PlayerIdleState()");
             m_animator.SetInteger("AnimState", 0);
         }
         else if (IsInState<PlayerRunState>())
         {
+            Debug.Log("PlayerRunState()");
             m_animator.SetInteger("AnimState", 1);
         }
         /*

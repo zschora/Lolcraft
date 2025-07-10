@@ -31,9 +31,6 @@ public class StateMachine
         if (currentState != null)
         {
             currentState.Exit();
-        } else
-        {
-            return;
         }
 
         // Меняем состояние
