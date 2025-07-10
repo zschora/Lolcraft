@@ -15,6 +15,7 @@ public class GameManager : Singleton<GameManager>
 
     public PlayerController myOriginPlayer;
     public PlayerController myCurrentPlayer;
+    public PlayerController myCurrentMonster;
     public System.Collections.Generic.List<PlayerController> myPlayers = new System.Collections.Generic.List<PlayerController>();
     public GameObject gameOverPanel;
     public Button restartButton;
@@ -26,6 +27,7 @@ public class GameManager : Singleton<GameManager>
     // События для подписки других скриптов
     public delegate void OnStateChanged(GameState newState);
     public event OnStateChanged onStateChanged;
+
     
     // Свойство для получения текущего состояния
     public GameState CurrentState 
