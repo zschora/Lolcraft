@@ -2,49 +2,62 @@
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
 
-    [SerializeField] float      m_speed = 4.0f;
+    [SerializeField] float m_speed = 4.0f;
     //[SerializeField] float      m_jumpForce = 7.5f;
     //[SerializeField] float      m_rollForce = 6.0f;
-    [SerializeField] bool       m_noBlood = false;
+    [SerializeField] bool m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
     [SerializeField] BoxCollider2D lifeCollider;
     [SerializeField] BoxCollider2D deathCollider;
 
-    private Animator            m_animator;
-    private Rigidbody2D         m_body2d;
-    private StateMachine        stateMachine;
-    private ColliderSensor      m_groundSensor;
-    private ColliderSensor      attackSensorLeft;
-    private ColliderSensor      attackSensorRight;
+    private Animator m_animator;
+    private Rigidbody2D m_body2d;
+    private StateMachine stateMachine;
+    private ColliderSensor m_groundSensor;
+    private ColliderSensor attackSensorLeft;
+    private ColliderSensor attackSensorRight;
 
     //private bool                m_isWallSliding = false;
     //private bool                m_rolling = false;
-    private int                 m_facingDirection = 1;
-    private int                 m_currentAttack = 0;
-    private float               m_timeSinceAttack = 0.0f;
-    private float               m_timeSinceBlock = 0.0f;
-    private float               m_delayToIdle = 0.0f;
+    private int m_facingDirection = 1;
+    private int m_currentAttack = 0;
+    private float m_timeSinceAttack = 0.0f;
+    private float m_timeSinceBlock = 0.0f;
+    private float m_delayToIdle = 0.0f;
     //private float               m_rollDuration = 8.0f / 14.0f;
     //private float               m_rollCurrentTime;
-    private bool                m_grounded = false;
-    private bool                isSleep = false;
+    private bool m_grounded = false;
+    private bool isSleep = false;
 
-    public bool                 isPlayable = true;
-    public float                hp = 50; // 60
-    public float                damage = 10; // 25
-    public float                damage_speed = 1;
-    public float                move_speed = 1; // 0.5
-    public float                min_hp_to_takeover = 1000;
-    public float                attackCooldown = 1f;
-    public float                blockCooldown = 1f;
-    public bool                 isOrigin = false;
-    public float                block_time = 0.2f;
+    public bool isPlayable = true;
+    public float hp = 50; // 60
+    public float damage = 10; // 25
+    public float damage_speed = 1;
+    public float move_speed = 1; // 0.5
+    public float min_hp_to_takeover = 1000;
+    public float attackCooldown = 1f;
+    public float blockCooldown = 0f;
+    public bool isOrigin = false;
+    public float block_time = 1f;
 
-    private bool                isRightOriented = true;
-    private int                 colorState = 0;
+    private bool isRightOriented = true;
+    private int colorState = 0;
+
+    [Header("MonsterSettings")]
+    // Monster settings
+    public float switchDelayTime = 1f;
+    private float switchTime = 0f;
+    [SerializeField] private float maxDistanceToAttackDistance = 4;
+    [SerializeField] private float detectionDistance = 25; // Как далеко "смотрим"
+    [SerializeField] private LayerMask detectionLayer;
+    [SerializeField] private float rayHeight = 1.2f;
+
+
 
     public bool IsGrounded
     {
@@ -52,7 +65,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         if (isPlayable)
         {
@@ -186,7 +199,7 @@ public class PlayerController : MonoBehaviour {
 
     private void MinusHP(float value)
     {
-        if ( hp < 0.01)
+        if (hp < 0.01)
         {
             //Debug.Log("Уже мертв");
             return;
@@ -263,7 +276,7 @@ public class PlayerController : MonoBehaviour {
         }
         else if (hp - min_hp_to_takeover < 0.1)
         { // before takeover
-            if  (colorState != 1)
+            if (colorState != 1)
             {
 
                 Debug.Log("color state to 1");
@@ -324,12 +337,6 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (!isPlayable || IsInState<PlayerDeathState>())
-        {
-            //ToIdle();
-            return;
-        }
-
         // Increase timers that controls attack and block
         m_timeSinceAttack += Time.deltaTime;
         m_timeSinceBlock += Time.deltaTime;
@@ -356,6 +363,18 @@ public class PlayerController : MonoBehaviour {
         {
             m_grounded = false;
             m_animator.SetBool("Grounded", m_grounded);
+        }
+
+        if (!isPlayable && !isOrigin)
+        {
+            AIUpdate();
+            return;
+        }
+
+        if (!isPlayable || IsInState<PlayerDeathState>())
+        {
+            //ToIdle();
+            return;
         }
 
         // Check block
@@ -521,12 +540,12 @@ public class PlayerController : MonoBehaviour {
     {
         if (IsInState<PlayerIdleState>())
         {
-            //Debug.Log("PlayerIdleState()");
+            Debug.Log("Animate PlayerIdleState()");
             m_animator.SetInteger("AnimState", 0);
         }
         else if (IsInState<PlayerRunState>())
         {
-            //Debug.Log("PlayerRunState()");
+            Debug.Log("Animate PlayerRunState()");
             m_animator.SetInteger("AnimState", 1);
         }
         /*
@@ -567,5 +586,209 @@ public class PlayerController : MonoBehaviour {
 
     void MonsterAttack()
     {
+        switchTime += Time.deltaTime;
+        m_timeSinceAttack += Time.deltaTime;
+
+        float distance;
+        bool aPlayerDetected = DetectPlayer(out distance);
+        Debug.Log($"aPlayerDetected: {aPlayerDetected}");
+
+        if (aPlayerDetected && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>())
+        {
+            //Debug.Log("detected");
+            ChangeState<PlayerRunState>();
+            //m_delayToIdle = 0.05f;
+        } else if (!aPlayerDetected && !IsInState<PlayerIdleState>())
+        {
+            //Debug.Log("not player");
+            ChangeState<PlayerIdleState>();
+        }
+
+        if (IsInState<PlayerIdleState>())
+        {
+            //Debug.Log("idle");
+            SwitchDirection();
+        } else if (IsInState<PlayerRunState>())
+        {
+            //Debug.Log("run");
+            if (!aPlayerDetected)
+            {
+                ChangeState<PlayerIdleState>();
+                return;
+            }
+            Debug.Log("REALrun");
+            // Идём к цели
+            //float stopDistance = .1f;
+            var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
+            //var myAttackSensor = attackSensorRight;
+            if (!myAttackSensor.State() || myAttackSensor.State() && myAttackSensor.myPlayerCollision is null)
+            {
+             //   if (true)//distance > stopDistance)
+            //{
+                m_body2d.velocity = new Vector2(m_facingDirection * m_speed * move_speed, m_body2d.velocity.y);
+            } else
+            {
+                ChangeState<PlayerAttackState>();
+            }
+            /*
+            else
+            {
+                m_body2d.velocity = new Vector2(0, m_body2d.velocity.y);
+                ToIdle();
+
+                // Атакуем, если можно
+                if (m_timeSinceAttack > attackCooldown)
+                {
+                    Attack();
+                    ChangeState<PlayerAttackState>();
+                    m_currentAttack = (m_currentAttack % 3) + 1;
+                    m_animator.SetTrigger("Attack" + m_currentAttack);
+                    m_timeSinceAttack = 0;
+                }
+            }
+            */
+        } else if (IsInState<PlayerAttackState>() && m_timeSinceAttack > attackCooldown)
+        {
+            //Debug.Log("run");
+            if (!aPlayerDetected)
+            {
+                ChangeState<PlayerIdleState>();
+                return;
+            }
+
+            Attack();
+            m_currentAttack++;
+
+            // Loop back to one after third attack
+            if (m_currentAttack > 3)
+                m_currentAttack = 1;
+
+            // Reset Attack combo if time since last attack is too large
+            if (m_timeSinceAttack > 1.0f)
+                m_currentAttack = 1;
+
+            // Call one of three attack animations "Attack1", "Attack2", "Attack3"
+            m_animator.SetTrigger("Attack" + m_currentAttack);
+
+            // Reset timer
+            m_timeSinceAttack = 0.0f;
+        }
+        
+        
+        Animate();
+
+        /*
+        // Найти ближайшего живого игрока
+        var players = GameManager.Instance.myPlayers
+            .Where(p => p != null && p.isPlayable && p.hp > 0)
+            .ToList();
+
+        if (players.Count == 0)
+            return;
+
+        var target = players
+            .OrderBy(p => Vector2.Distance(p.transform.position, transform.position))
+            .First();
+
+        float distance = Vector2.Distance(transform.position, target.transform.position);
+
+        Vector2 direction = (target.transform.position - transform.position).normalized;
+
+        // Поворачиваемся к цели
+        if (direction.x > 0.1f)
+        {
+            GetComponent<SpriteRenderer>().flipX = false;
+            m_facingDirection = 1;
+            isRightOriented = true;
+        }
+        else if (direction.x < -0.1f)
+        {
+            GetComponent<SpriteRenderer>().flipX = true;
+            m_facingDirection = -1;
+            isRightOriented = false;
+        }
+
+        // Идём к цели
+        float stopDistance = 1.5f;
+        if (distance > stopDistance)
+        {
+            m_body2d.velocity = new Vector2(direction.x * m_speed * move_speed, m_body2d.velocity.y);
+            ChangeState<PlayerRunState>();
+        }
+        else
+        {
+            m_body2d.velocity = new Vector2(0, m_body2d.velocity.y);
+            ToIdle();
+
+            // Атакуем, если можно
+            if (m_timeSinceAttack > attackCooldown)
+            {
+                Attack();
+                ChangeState<PlayerAttackState>();
+                m_currentAttack = (m_currentAttack % 3) + 1;
+                m_animator.SetTrigger("Attack" + m_currentAttack);
+                m_timeSinceAttack = 0;
+            }
+        }
+        */
+    }
+
+    private void SwitchDirection()
+    {
+        if (IsInState<PlayerDeathState>())
+        {
+            return;
+        }
+
+        if (switchTime > switchDelayTime)
+        {
+            if (isRightOriented)
+            {
+                GetComponent<SpriteRenderer>().flipX = true;
+                m_facingDirection = -1;
+                isRightOriented = false;
+            }
+            else
+            {
+
+                GetComponent<SpriteRenderer>().flipX = false;
+                m_facingDirection = 1;
+                isRightOriented = true;
+            }
+
+            switchTime = 0f;
+        }
+    }
+
+    private bool DetectPlayer(out float distance)
+    {
+        distance = 0;
+        Vector2 origin = transform.position;
+        origin.y += rayHeight;
+        Vector2 direction = new Vector2(m_facingDirection, 0);
+
+        RaycastHit2D[] hit = Physics2D.RaycastAll(origin, direction, detectionDistance, detectionLayer);
+        Debug.DrawRay(origin, direction * detectionDistance, Color.red);
+
+        foreach (var ray in hit)
+        {
+            if (ray.collider is null) continue;
+            var aPlayer = ray.collider.gameObject.GetComponent<PlayerController>();
+
+            if (aPlayer != null && aPlayer.isPlayable)
+            {
+                distance = ray.distance;
+                if (distance > maxDistanceToAttackDistance)
+                {
+                    break;
+                }
+
+                //Debug.Log($"Обнаружен плеер на расстоянии {distance}, игрок: {aPlayer.isPlayable}");
+                return aPlayer.isPlayable;
+            }
+        }
+
+        return false;
+
     }
 }
