@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
     private int                 m_facingDirection = 1;
     private int                 m_currentAttack = 0;
     private float               m_timeSinceAttack = 0.0f;
+    private float               m_timeSinceBlock = 0.0f;
     private float               m_delayToIdle = 0.0f;
     //private float               m_rollDuration = 8.0f / 14.0f;
     //private float               m_rollCurrentTime;
@@ -38,11 +39,12 @@ public class PlayerController : MonoBehaviour {
     public float                move_speed = 1; // 0.5
     public float                min_hp_to_takeover = 1000;
     public float                attackCooldown = 1f;
+    public float                blockCooldown = 1f;
     public bool                 isOrigin = false;
     public float                block_time = 0.2f;
 
     private bool                isRightOriented = true;
-    private float               lastAttackTime = 0f;
+    private int                 colorState = 0;
 
     public bool IsGrounded
     {
@@ -105,10 +107,10 @@ public class PlayerController : MonoBehaviour {
 
     private void OnMouseOver()
     {
-        Debug.Log("on mouse over");
+        //Debug.Log("on mouse over");
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log("takeover");
+            //Debug.Log("takeover");
             if (hp < 0.1 || isPlayable)
             {
                 return;
@@ -138,12 +140,14 @@ public class PlayerController : MonoBehaviour {
             GameManager.Instance.myCurrentPlayer = this;
             GameManager.Instance.playerCameraController.ChangeFollow(gameObject);
         }
+
+        CheckMonsterState(CheckDeath());
     }
 
     public void Sleep()
     {
         isSleep = true;
-        Debug.Log("Уснул");
+        //Debug.Log("Уснул");
         ChangeState<PlayerDeathState>();
         m_animator.SetBool("noBlood", m_noBlood);
         m_animator.SetTrigger("Death");
@@ -156,7 +160,7 @@ public class PlayerController : MonoBehaviour {
     public void WakeUp()
     {
         isSleep = false;
-        Debug.Log("Проснулся");
+        //Debug.Log("Проснулся");
         ChangeState<PlayerIdleState>();
         m_animator.SetTrigger("Hurt");
         GetComponent<BoxCollider2D>().size = new Vector2(0.88f, 1.26f);
@@ -171,9 +175,9 @@ public class PlayerController : MonoBehaviour {
         //var myAttackSensor = attackSensorRight;
         if (myAttackSensor.State())
         {
-            Debug.Log("Есть враг");
+            //Debug.Log("Есть враг");
             var myEnemy = myAttackSensor.myPlayerCollision;
-            if (myEnemy != null)
+            if (myEnemy != null && !myEnemy.IsInState<PlayerBlockState>())
             {
                 myEnemy.MinusHP(damage);
             }
@@ -184,13 +188,94 @@ public class PlayerController : MonoBehaviour {
     {
         if ( hp < 0.01)
         {
-            Debug.Log("Уже мертв");
+            //Debug.Log("Уже мертв");
             return;
         }
         //Debug.Log($"ХП до атаки {hp}");
         hp = System.Math.Max(0, hp - value);
         bool isDead = CheckDeath();
+        CheckMonsterState(isDead);
         Debug.Log($"Аттака на {value}, осталось {hp}, умер: {isDead}");
+    }
+
+    class ChangeColor
+    {
+        private SpriteRenderer m_renderer;
+
+        public float R, G, B, A;
+        public ChangeColor(SpriteRenderer renderer)
+        {
+            m_renderer = renderer;
+
+            var aColor = m_renderer.color;
+            R = aColor.r;
+            G = aColor.g;
+            B = aColor.b;
+            A = aColor.a;
+            Debug.Log($"r:{R}, g: {G}, b: {B}, a: {A}");
+        }
+
+        public void Change()
+        {
+            var aNewColor = new Color(R, G, B, A);
+            m_renderer.color = aNewColor;
+        }
+    }
+
+    void CheckMonsterState(bool isDead)
+    {
+        if (isOrigin)
+        {
+            return;
+        }
+
+        if (isDead)
+        {
+            if (colorState != 0)
+            {
+                var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
+                aChangeColor.R = 1f;
+                aChangeColor.G = 1f;
+                aChangeColor.B = 1f;
+                aChangeColor.A = 1f;
+                aChangeColor.Change();
+
+                colorState = 0;
+                Debug.Log("color state to 0 before death");
+            }
+
+            return;
+        }
+
+        if (isPlayable)
+        { // not dead after takeover
+            if (colorState != 2)
+            {
+                var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
+                aChangeColor.R = 240f / 255f;
+                aChangeColor.G = 100f / 255f;
+                aChangeColor.B = 100f / 255f;
+                aChangeColor.Change();
+
+                colorState = 2;
+                Debug.Log("color state to 2");
+            }
+        }
+        else if (hp - min_hp_to_takeover < 0.1)
+        { // before takeover
+            if  (colorState != 1)
+            {
+
+                Debug.Log("color state to 1");
+                var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
+                aChangeColor.R = 216f / 255f;
+                aChangeColor.G = 238f / 255f;
+                aChangeColor.B = 97f / 255f;
+                aChangeColor.Change();
+
+                colorState = 1;
+            }
+        }
     }
 
     private bool CheckDeath()
@@ -232,6 +317,8 @@ public class PlayerController : MonoBehaviour {
 
         gameObject.layer = LayerMask.NameToLayer("DeadBodies");
         //GetComponent<Collider2D>().enabled = false;
+
+        CheckMonsterState(true);
     }
 
     // Update is called once per frame
@@ -242,8 +329,10 @@ public class PlayerController : MonoBehaviour {
             //ToIdle();
             return;
         }
-        // Increase timer that controls attack combo
+
+        // Increase timers that controls attack and block
         m_timeSinceAttack += Time.deltaTime;
+        m_timeSinceBlock += Time.deltaTime;
 
         /*
         // Increase timer that checks roll duration
@@ -275,7 +364,11 @@ public class PlayerController : MonoBehaviour {
             if (stateMachine.GetCurrentState().ActiveTime > block_time)
             {
                 ChangeState<PlayerIdleState>();
-                m_animator.SetBool("IdleBlock", false);
+                var aRenderer = GetComponent<SpriteRenderer>();
+                var aNewColor = aRenderer.color;
+                aNewColor.a = 1f;
+                aRenderer.color = aNewColor;
+                //m_animator.SetBool("IdleBlock", false);
             }
             return;
             /*{
@@ -354,14 +447,20 @@ public class PlayerController : MonoBehaviour {
         }
 
         // Block
-        else if (Input.GetKeyDown("left shift") || Input.GetKeyDown("right shift"))
+        else if ((Input.GetKeyDown("left shift") || Input.GetKeyDown("right shift")) && m_timeSinceBlock > blockCooldown)
         {
             // ???????????
             m_body2d.velocity = Vector2.zero;
 
             ChangeState<PlayerBlockState>();
-            m_animator.SetTrigger("Block");
-            m_animator.SetBool("IdleBlock", true);
+
+            var aRenderer = GetComponent<SpriteRenderer>();
+            var aNewColor = aRenderer.color;
+            aNewColor.a = 0.5f;
+            aRenderer.color = aNewColor;
+            //m_animator.SetTrigger("Block");
+            //m_animator.SetBool("IdleBlock", true);
+            m_timeSinceBlock = 0f;
         }
 
         /*
@@ -422,12 +521,12 @@ public class PlayerController : MonoBehaviour {
     {
         if (IsInState<PlayerIdleState>())
         {
-            Debug.Log("PlayerIdleState()");
+            //Debug.Log("PlayerIdleState()");
             m_animator.SetInteger("AnimState", 0);
         }
         else if (IsInState<PlayerRunState>())
         {
-            Debug.Log("PlayerRunState()");
+            //Debug.Log("PlayerRunState()");
             m_animator.SetInteger("AnimState", 1);
         }
         /*

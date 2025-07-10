@@ -8,6 +8,8 @@ public class StateMachine
     private IState currentState;
     private IState prevState;
     private Dictionary<Type, IState> states = new();
+
+    private bool debug = false;
     
     // Добавление состояния в машину состояний
     public void AddState(IState state)
@@ -23,7 +25,7 @@ public class StateMachine
         
         if (!states.ContainsKey(stateType))
         {
-            Debug.LogError($"Состояние {stateType} не найдено в StateMachine!");
+            if (debug) Debug.LogError($"Состояние {stateType} не найдено в StateMachine!");
             return;
         }
         
@@ -39,7 +41,7 @@ public class StateMachine
         // Входим в новое состояние
         currentState.Enter();
         
-        Debug.Log($"Состояние изменено на: {stateType.Name}");
+        if (debug) Debug.Log($"Состояние изменено на: {stateType.Name}");
     }
 
     // Вернуться в предыдущее состояние
@@ -51,7 +53,7 @@ public class StateMachine
             currentState = prevState;
             currentState.Enter();
 
-            Debug.Log($"Состояние возвращенно");
+            if (debug) Debug.Log($"Состояние возвращенно");
         }
     }
     

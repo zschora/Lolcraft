@@ -4,6 +4,7 @@ using UnityEngine;
 abstract public class IState
 {
     private float beginTime = 0.0f;
+    protected bool debug = false;
 
     public virtual void Enter()      // Вызывается при входе в состояние
     {

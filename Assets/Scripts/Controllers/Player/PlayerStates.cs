@@ -13,7 +13,7 @@ public class PlayerIdleState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок в состоянии покоя");
+        if (debug) Debug.Log("Игрок в состоянии покоя");
     }
     
     public override void Execute()
@@ -59,7 +59,7 @@ public class PlayerWalkState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок идет");
+        if (debug) Debug.Log("Игрок идет");
     }
     
     public override void Execute()
@@ -106,7 +106,7 @@ public class PlayerRunState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок бежит");
+        if (debug) Debug.Log("Игрок бежит");
     }
     
     public override void Execute()
@@ -154,7 +154,7 @@ public class PlayerJumpState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок прыгает");
+        if (debug) Debug.Log("Игрок прыгает");
         //player.Jump();
         jumpTimer = 0f;
     }
@@ -205,7 +205,7 @@ public class PlayerRollState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок кувыркается");
+        if (debug) Debug.Log("Игрок кувыркается");
         //player.Jump();
         //jumpTimer = 0f;
     }
@@ -258,7 +258,7 @@ public class PlayerBlockState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок в блоке");
+        if (debug) Debug.Log("Игрок в блоке");
         //player.Jump();
         //jumpTimer = 0f;
     }
@@ -311,7 +311,7 @@ public class PlayerAttackState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок атакует");
+        if (debug) Debug.Log("Игрок атакует");
         //player.Jump();
         //jumpTimer = 0f;
     }
@@ -364,7 +364,7 @@ public class PlayerDeathState : IState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Игрок умер");
+        if (debug) Debug.Log("Игрок умер");
         //player.Jump();
         //jumpTimer = 0f;
     }
