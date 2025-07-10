@@ -66,6 +66,13 @@ MonoBehaviour:
   blockCooldown: 1
   isOrigin: 0
   block_time: 0.2
+  switchDelayTime: 1
+  maxDistanceToAttackDistance: 4
+  detectionDistance: 25
+  detectionLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  rayHeight: 1.2
 --- !u!95 &2001985588363186836
 Animator:
   serializedVersion: 5
