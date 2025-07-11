@@ -127,6 +127,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnMouseOver()
     {
+        if (isOrigin && stateMachine.GetCurrentState() is not null && IsInState<PlayerDeathState>() && !isSleep)
+        {
+            return;
+        }
+        if (IsInState<PlayerDeathState>() && !isOrigin)
+        {
+            return;
+        }
         //Debug.Log("on mouse over");
         if (Input.GetMouseButtonDown(1))
         {
@@ -143,7 +151,7 @@ public class PlayerController : MonoBehaviour
 
             isPlayable = true;
             GameManager.Instance.myCurrentPlayer.isPlayable = false;
-            GameManager.Instance.myCurrentMonster = null;
+            //GameManager.Instance.myCurrentMonster = null;
 
             if (!GameManager.Instance.myCurrentPlayer.isOrigin)
             {
@@ -334,6 +342,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("ГГ умер не в своем теле");
             GameManager.Instance.playerCameraController.ChangeFollow(GameManager.Instance.myOriginPlayer.gameObject);
             GameManager.Instance.myOriginPlayer.Death(false);
+            GameManager.Instance.myOriginPlayer.isSleep = false;
             GameManager.Instance.ShowGameOver();
         }
 
@@ -356,6 +365,10 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (IsInState<PlayerDeathState>() && !isOrigin)
+        {
+            return;
+        }
         // Increase timers that controls attack and block
         m_timeSinceAttack += Time.deltaTime;
         m_timeSinceBlock += Time.deltaTime;
@@ -479,6 +492,7 @@ public class PlayerController : MonoBehaviour
         {
             Attack();
             ChangeState<PlayerAttackState>();
+            m_animator.SetInteger("AnimState", 1);
             m_currentAttack++;
 
             // Loop back to one after third attack
@@ -628,19 +642,19 @@ public class PlayerController : MonoBehaviour
 
         if (aPlayerDetected && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>())
         {
-            if (GameManager.Instance.myCurrentMonster is null)
-            {
-                GameManager.Instance.myCurrentMonster = this;
-                //Debug.Log("detected");
+            //if (GameManager.Instance.myCurrentMonster is null)
+            //{
+            //    GameManager.Instance.myCurrentMonster = this;
+                Debug.Log("AAAAAAAAAAA");
                 ChangeState<PlayerRunState>();
-            }
+            //}
             //m_delayToIdle = 0.05f;
         } else if (!aPlayerDetected && !IsInState<PlayerIdleState>())
         {
-            if (GameManager.Instance.myCurrentMonster == this)
-            {
-                GameManager.Instance.myCurrentMonster = null;
-            }
+            //if (GameManager.Instance.myCurrentMonster == this)
+            //{
+            //    GameManager.Instance.myCurrentMonster = null;
+            //}
             //Debug.Log("not player");
             ChangeState<PlayerIdleState>();
         }
@@ -654,10 +668,10 @@ public class PlayerController : MonoBehaviour
             Debug.Log("run");
             if (!aPlayerDetected)
             {
-                if (GameManager.Instance.myCurrentMonster == this)
-                {
-                    GameManager.Instance.myCurrentMonster = null;
-                }
+                //if (GameManager.Instance.myCurrentMonster == this)
+                //{
+                //    GameManager.Instance.myCurrentMonster = null;
+                //}
                 ChangeState<PlayerIdleState>();
                 return;
             }
@@ -666,10 +680,8 @@ public class PlayerController : MonoBehaviour
             //float stopDistance = .1f;
             var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
             //var myAttackSensor = attackSensorRight;
-            if (!myAttackSensor.State() || myAttackSensor.State() && myAttackSensor.myPlayerCollision is null)
+            if (!myAttackSensor.State() || (myAttackSensor.State() && myAttackSensor.myPlayerCollision is null))
             {
-             //   if (true)//distance > stopDistance)
-            //{
                 m_body2d.velocity = new Vector2(m_facingDirection * m_speed * move_speed, m_body2d.velocity.y);
             } else
             {
@@ -695,12 +707,12 @@ public class PlayerController : MonoBehaviour
         } else if (IsInState<PlayerAttackState>())
         {
             //Debug.Log($"Distance: {distance}");
-            if (!aPlayerDetected || distance > 1.1)
+            if (!aPlayerDetected || distance > 0.55)
             {
-                if (GameManager.Instance.myCurrentMonster == this)
-                {
-                    GameManager.Instance.myCurrentMonster = null;
-                }
+                //if (GameManager.Instance.myCurrentMonster == this)
+                //{
+                //    GameManager.Instance.myCurrentMonster = null;
+                //}
 
                 ChangeState<PlayerIdleState>();
                 return;
@@ -831,10 +843,12 @@ public class PlayerController : MonoBehaviour
         //Debug.Log($"Столкновений: {hit.Length}");
         foreach (var ray in hit)
         {
-            if (ray.collider is null) continue;
+            if (ray.collider is null || ray.distance < 0.001) continue;
+            Debug.Log($"Расстояние {distance}");
+            
             var aPlayer = ray.collider.gameObject.GetComponent<PlayerController>();
 
-            if (aPlayer != null && aPlayer.isPlayable)
+            if (aPlayer != null)
             {
                 distance = ray.distance;
                 if (distance > maxDistanceToAttackDistance)
@@ -842,7 +856,7 @@ public class PlayerController : MonoBehaviour
                     break;
                 }
 
-                //Debug.Log($"Обнаружен плеер на расстоянии {distance}, игрок: {aPlayer.isPlayable}");
+                Debug.Log($"Обнаружен плеер на расстоянии {distance}, игрок: {aPlayer.isPlayable}");
                 return aPlayer.isPlayable;
             }
         }
