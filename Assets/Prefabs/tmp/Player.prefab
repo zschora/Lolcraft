@@ -71,7 +71,7 @@ MonoBehaviour:
   detectionDistance: 25
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   rayHeight: 1.2
 --- !u!95 &2001985588363186836
 Animator:
