@@ -6,6 +6,10 @@ public class ButtonController : MonoBehaviour
 
     public bool ButtonControllerPressed { get; private set; }
 
+    [SerializeField] private AudioSource click;
+
+    private bool wasPressedLastFrame = false;
+
     void Start()
     {
         Transform sensorTransform = transform.Find("PlayerSensorButton");
@@ -18,19 +22,28 @@ public class ButtonController : MonoBehaviour
         {
             Debug.LogError("Не найден ColliderSensor на дочернем объекте 'PlayerSensorButton'");
         }
+
+        ButtonControllerPressed = false;
     }
 
     void Update()
     {
         if (playerSensor != null)
         {
-            // Учитываем случай с несколькими коллайдерами у игрока
-            ButtonControllerPressed = playerSensor.State() && playerSensor.myPlayerCollision != null;
+            bool isPressedNow = playerSensor.State() && playerSensor.myPlayerCollision != null;
 
-            if (ButtonControllerPressed)
+            // Сохраняем состояние
+            ButtonControllerPressed = isPressedNow;
+
+            // Если кнопка была не нажата, а теперь нажата — играем звук
+            if (!wasPressedLastFrame && isPressedNow)
             {
-                Debug.Log("Кнопка нажата");
+                click?.Play();
+                Debug.Log("Кнопка нажата (звук)");
             }
+
+            // Обновляем состояние для следующего кадра
+            wasPressedLastFrame = isPressedNow;
         }
     }
 }
