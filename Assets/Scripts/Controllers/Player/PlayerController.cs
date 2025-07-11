@@ -367,7 +367,7 @@ public class PlayerController : MonoBehaviour
             m_animator.SetBool("Grounded", m_grounded);
         }
 
-        if (!isPlayable && !isOrigin)
+        if (!isPlayable && !isOrigin && !IsInState<PlayerDeathState>())
         {
             AIUpdate();
             return;
@@ -787,7 +787,7 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit2D[] hit = Physics2D.RaycastAll(origin, direction, detectionDistance, detectionLayer);
         Debug.DrawRay(origin, direction * detectionDistance, Color.red);
-
+        Debug.Log($"Столкновений: {hit.Length}");
         foreach (var ray in hit)
         {
             if (ray.collider is null) continue;
