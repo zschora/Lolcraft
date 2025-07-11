@@ -41,7 +41,8 @@ public class StateMachine
         // Входим в новое состояние
         currentState.Enter();
         
-        if (debug) Debug.Log($"Состояние изменено на: {stateType.Name}");
+        //if (debug)
+        Debug.Log($"Состояние изменено на: {stateType.Name}");
     }
 
     // Вернуться в предыдущее состояние
