@@ -48,9 +48,12 @@ public class PlayerController : MonoBehaviour
     public float attackCooldown = 3f;
     [SerializeField] private float attackDelay = 2f; // когда именно ударить после начала анимации
     private bool attackStarted = false;
+    [SerializeField] private float attackFeedback = 0.2f;
+    private float attackFeedbackTimer = 0f;
     private float attackElapsedTime = 0f;
     public float blockCooldown = 0f;
     public float block_time = 1f;
+
 
     [Header("MonsterSettings")]
     // Monster settings
@@ -215,6 +218,16 @@ public class PlayerController : MonoBehaviour
         bool isDead = CheckDeath();
         CheckMonsterState(isDead);
         Debug.Log($"Аттака на {value}, осталось {hp}, умер: {isDead}");
+        
+        attackFeedbackTimer = 0;
+        var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
+        aChangeColor.R = 1f;
+        aChangeColor.G = 0f;
+        aChangeColor.B = 0f;
+        aChangeColor.A = 1f;
+        aChangeColor.Change();
+        Debug.Log("КРАСНЫЙ");
+
     }
 
     class ChangeColor
@@ -346,6 +359,7 @@ public class PlayerController : MonoBehaviour
         // Increase timers that controls attack and block
         m_timeSinceAttack += Time.deltaTime;
         m_timeSinceBlock += Time.deltaTime;
+        attackFeedbackTimer += Time.deltaTime;
 
         /*
         // Increase timer that checks roll duration
@@ -357,6 +371,17 @@ public class PlayerController : MonoBehaviour
             m_rolling = false;
         */
         //Check if character just landed on the ground
+        if (attackFeedbackTimer > attackFeedback && attackFeedbackTimer < attackFeedback+0.1)
+        {
+            Debug.Log("БЕЛЫЙ");
+            var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
+            aChangeColor.R = 1f;
+            aChangeColor.G = 1f;
+            aChangeColor.B = 1f;
+            aChangeColor.A = 1f;
+            aChangeColor.Change();
+        }
+
         if (!m_grounded && m_groundSensor.State())
         {
             ChangeState<PlayerIdleState>();
@@ -594,6 +619,7 @@ public class PlayerController : MonoBehaviour
         switchTime += Time.deltaTime;
         m_timeSinceAttack += Time.deltaTime;
         attackElapsedTime += Time.deltaTime;
+        
 
         float distance;
         bool aPlayerDetected = DetectPlayer(out distance);
