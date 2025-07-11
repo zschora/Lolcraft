@@ -36,17 +36,21 @@ public class PlayerController : MonoBehaviour
 
     public bool isPlayable = true;
     public float hp = 50; // 60
-    public float damage = 10; // 25
-    public float damage_speed = 1;
     public float move_speed = 1; // 0.5
     public float min_hp_to_takeover = 1000;
-    public float attackCooldown = 1f;
-    public float blockCooldown = 0f;
     public bool isOrigin = false;
-    public float block_time = 1f;
 
     private bool isRightOriented = true;
     private int colorState = 0;
+
+    [Header("Attack settings")]
+    public float damage = 10; // 25
+    public float attackCooldown = 3f;
+    [SerializeField] private float attackDelay = 2f; // когда именно ударить после начала анимации
+    private bool attackStarted = false;
+    private float attackElapsedTime = 0f;
+    public float blockCooldown = 0f;
+    public float block_time = 1f;
 
     [Header("MonsterSettings")]
     // Monster settings
@@ -589,10 +593,12 @@ public class PlayerController : MonoBehaviour
     {
         switchTime += Time.deltaTime;
         m_timeSinceAttack += Time.deltaTime;
+        attackElapsedTime += Time.deltaTime;
 
         float distance;
         bool aPlayerDetected = DetectPlayer(out distance);
         Debug.Log($"aPlayerDetected: {aPlayerDetected}");
+
 
         if (aPlayerDetected && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>())
         {
@@ -619,7 +625,7 @@ public class PlayerController : MonoBehaviour
             SwitchDirection();
         } else if (IsInState<PlayerRunState>())
         {
-            //Debug.Log("run");
+            Debug.Log("run");
             if (!aPlayerDetected)
             {
                 if (GameManager.Instance.myCurrentMonster == this)
@@ -629,7 +635,7 @@ public class PlayerController : MonoBehaviour
                 ChangeState<PlayerIdleState>();
                 return;
             }
-            Debug.Log("REALrun");
+            //Debug.Log("REALrun");
             // Идём к цели
             //float stopDistance = .1f;
             var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
@@ -660,10 +666,10 @@ public class PlayerController : MonoBehaviour
                 }
             }
             */
-        } else if (IsInState<PlayerAttackState>() && m_timeSinceAttack > attackCooldown)
+        } else if (IsInState<PlayerAttackState>())
         {
-            //Debug.Log("run");
-            if (!aPlayerDetected)
+            //Debug.Log($"Distance: {distance}");
+            if (!aPlayerDetected || distance > 1.1)
             {
                 if (GameManager.Instance.myCurrentMonster == this)
                 {
@@ -673,23 +679,32 @@ public class PlayerController : MonoBehaviour
                 ChangeState<PlayerIdleState>();
                 return;
             }
+            
+            if (!attackStarted && m_timeSinceAttack > attackCooldown)
+            {
+                attackStarted = true;
+                attackElapsedTime = 0f;
 
-            Attack();
-            m_currentAttack++;
+                // Reset timer  
+                m_timeSinceAttack = 0.0f;
+                m_currentAttack++;
 
-            // Loop back to one after third attack
-            if (m_currentAttack > 3)
-                m_currentAttack = 1;
+                // Loop back to one after third attack
+                if (m_currentAttack > 3)
+                    m_currentAttack = 1;
 
-            // Reset Attack combo if time since last attack is too large
-            if (m_timeSinceAttack > 1.0f)
-                m_currentAttack = 1;
+                // Reset Attack combo if time since last attack is too large
+                if (m_timeSinceAttack > 1.0f)
+                    m_currentAttack = 1;
 
-            // Call one of three attack animations "Attack1", "Attack2", "Attack3"
-            m_animator.SetTrigger("Attack" + m_currentAttack);
+                // Call one of three attack animations "Attack1", "Attack2", "Attack3"
+                m_animator.SetTrigger("Attack" + m_currentAttack);
+            } else if (attackStarted && attackElapsedTime > attackDelay)
+            {
+                Attack();
 
-            // Reset timer
-            m_timeSinceAttack = 0.0f;
+                attackStarted = false;
+            }
         }
         
         
@@ -787,7 +802,7 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit2D[] hit = Physics2D.RaycastAll(origin, direction, detectionDistance, detectionLayer);
         Debug.DrawRay(origin, direction * detectionDistance, Color.red);
-        Debug.Log($"Столкновений: {hit.Length}");
+        //Debug.Log($"Столкновений: {hit.Length}");
         foreach (var ray in hit)
         {
             if (ray.collider is null) continue;
