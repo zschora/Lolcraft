@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
     // Monster settings
     public float switchDelayTime = 1f;
     private float switchTime = 0f;
-    [SerializeField] private float maxDistanceToAttackDistance = 4;
+    [SerializeField] private float maxDistanceToAttackDistance = 100;
     [SerializeField] private float detectionDistance = 25; // Как далеко "смотрим"
     [SerializeField] private LayerMask detectionLayer;
     [SerializeField] private float rayHeight = 1.2f;
@@ -231,6 +231,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Аттака на {value}, осталось {hp}, умер: {isDead}");
         
         attackFeedbackTimer = 0;
+        colorState = 4;
         var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
         aChangeColor.R = 1f;
         aChangeColor.G = 0f;
@@ -238,7 +239,6 @@ public class PlayerController : MonoBehaviour
         aChangeColor.A = 1f;
         aChangeColor.Change();
         Debug.Log("КРАСНЫЙ");
-
     }
 
     class ChangeColor
@@ -265,14 +265,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void CheckMonsterState(bool isDead)
+    void CheckMonsterState(bool isDead) // CheckPlayerState
     {
-        if (isOrigin)
-        {
-            return;
-        }
-
-        if (isDead)
+        if (isDead || isOrigin)
         {
             if (colorState != 0)
             {
@@ -318,7 +313,17 @@ public class PlayerController : MonoBehaviour
 
                 colorState = 1;
             }
+
+            return;
         }
+        colorState = 0;
+        Debug.Log("БЕЛЫЙ");
+        var aChangeColor2 = new ChangeColor(GetComponent<SpriteRenderer>());
+        aChangeColor2.R = 1f;
+        aChangeColor2.G = 1f;
+        aChangeColor2.B = 1f;
+        aChangeColor2.A = 1f;
+        aChangeColor2.Change();
     }
 
     private bool CheckDeath()
@@ -391,15 +396,17 @@ public class PlayerController : MonoBehaviour
             m_rolling = false;
         */
         //Check if character just landed on the ground
-        if (attackFeedbackTimer > attackFeedback && attackFeedbackTimer < attackFeedback+0.1)
+        if (attackFeedbackTimer > attackFeedback && colorState == 4)
         {
-            Debug.Log("БЕЛЫЙ");
-            var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
-            aChangeColor.R = 1f;
-            aChangeColor.G = 1f;
-            aChangeColor.B = 1f;
-            aChangeColor.A = 1f;
-            aChangeColor.Change();
+            Debug.Log("ИЗМЕНЕНИЕ ЦВЕТА");
+            CheckMonsterState(false);
+            //Debug.Log("БЕЛЫЙ");
+            //var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
+            //aChangeColor.R = 1f;
+            //aChangeColor.G = 1f;
+            //aChangeColor.B = 1f;
+            //aChangeColor.A = 1f;
+            //aChangeColor.Change();
         }
 
         if (!m_grounded && m_groundSensor.State())
@@ -646,18 +653,27 @@ public class PlayerController : MonoBehaviour
         bool aPlayerDetected = DetectPlayer(out distance);
         Debug.Log($"aPlayerDetected: {aPlayerDetected}");
 
+        bool isAttackEnabled = false;
+        var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
+        //var myAttackSensor = attackSensorRight;
+        isAttackEnabled = myAttackSensor.State() && myAttackSensor.myPlayerCollision is not null;
 
-        if (aPlayerDetected && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>() && !attackStarted)
+        if (aPlayerDetected && !isAttackEnabled && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>())
         {
             //if (GameManager.Instance.myCurrentMonster is null)
             //{
             //    GameManager.Instance.myCurrentMonster = this;
-                Debug.Log("AAAAAAAAAAA");
-                ChangeState<PlayerRunState>();
+            Debug.Log("111111111");
+            ChangeState<PlayerRunState>();
             //}
             //m_delayToIdle = 0.05f;
+        } else if (aPlayerDetected && isAttackEnabled && !IsInState<PlayerAttackState>())
+        {
+            Debug.Log("2222222222222");
+            ChangeState<PlayerAttackState>();
         } else if (!aPlayerDetected && !IsInState<PlayerIdleState>())
         {
+            Debug.Log("3333333333333");
             //if (GameManager.Instance.myCurrentMonster == this)
             //{
             //    GameManager.Instance.myCurrentMonster = null;
@@ -668,31 +684,28 @@ public class PlayerController : MonoBehaviour
 
         if (IsInState<PlayerIdleState>())
         {
-            //Debug.Log("idle");
+            Debug.Log("idle");
             SwitchDirection();
         } else if (IsInState<PlayerRunState>())
         {
             Debug.Log("run");
             if (!aPlayerDetected)
             {
-                //if (GameManager.Instance.myCurrentMonster == this)
-                //{
-                //    GameManager.Instance.myCurrentMonster = null;
-                //}
+                Debug.Log("NOT DETECTED");
                 ChangeState<PlayerIdleState>();
-                return;
-            }
-            //Debug.Log("REALrun");
-            // Идём к цели
-            //float stopDistance = .1f;
-            var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
-            //var myAttackSensor = attackSensorRight;
-            if (!myAttackSensor.State() || (myAttackSensor.State() && myAttackSensor.myPlayerCollision is null))
-            {
-                m_body2d.velocity = new Vector2(m_facingDirection * m_speed * move_speed, m_body2d.velocity.y);
-            } else
-            {
-                ChangeState<PlayerAttackState>();
+            } else {
+
+                if (!isAttackEnabled)
+                {
+                    Debug.Log("NOT isAttackEnabled");
+                    m_body2d.velocity = new Vector2(m_facingDirection * m_speed * move_speed, m_body2d.velocity.y);
+                }
+                else
+                {
+                    Debug.Log("stop");
+                    m_body2d.velocity = Vector2.zero;
+                    ChangeState<PlayerAttackState>();
+                }
             }
             /*
             else
@@ -714,43 +727,52 @@ public class PlayerController : MonoBehaviour
         } else if (IsInState<PlayerAttackState>())
         {
             //Debug.Log($"Distance: {distance}");
-            if (!aPlayerDetected)
+            if (!aPlayerDetected || !isAttackEnabled)
             {
+                Debug.Log($"PlayerAttackState TO PlayerIdleState, aPlayerDetected = {aPlayerDetected}, isAttackEnabled = {isAttackEnabled}");
                 //if (GameManager.Instance.myCurrentMonster == this)
                 //{
                 //    GameManager.Instance.myCurrentMonster = null;
                 //}
 
                 ChangeState<PlayerIdleState>();
-                return;
             }
-            
-            if (!attackStarted && m_timeSinceAttack > attackCooldown)
+            else
             {
-                attackStarted = true;
-                attackElapsedTime = 0f;
-
-                // Reset timer  
-                m_timeSinceAttack = 0.0f;
-                m_currentAttack++;
-
-                // Loop back to one after third attack
-                if (m_currentAttack > 3)
-                    m_currentAttack = 1;
-
-                // Reset Attack combo if time since last attack is too large
-                if (m_timeSinceAttack > 1.0f)
-                    m_currentAttack = 1;
-
-                // Call one of three attack animations "Attack1", "Attack2", "Attack3"
-                m_animator.SetTrigger("Attack" + m_currentAttack);
-            } else if (attackStarted && attackElapsedTime > attackDelay)
-            {
-                attackStarted = false;
-                if (!Attack())
+                /*if (!isAttackEnabled)
                 {
-                    ChangeState<PlayerIdleState>();
+                    ChangeState<PlayerRunState>();
                 }
+                else */
+                if (!attackStarted && m_timeSinceAttack > attackCooldown)
+                {
+                    attackStarted = true;
+                    attackElapsedTime = 0f;
+
+                    // Reset timer  
+                    m_timeSinceAttack = 0.0f;
+                    m_currentAttack++;
+
+                    // Loop back to one after third attack
+                    if (m_currentAttack > 3)
+                        m_currentAttack = 1;
+
+                    // Reset Attack combo if time since last attack is too large
+                    if (m_timeSinceAttack > 1.0f)
+                        m_currentAttack = 1;
+
+                    // Call one of three attack animations "Attack1", "Attack2", "Attack3"
+                    m_animator.SetTrigger("Attack" + m_currentAttack);
+                }
+                else if (attackStarted && attackElapsedTime > attackDelay)
+                {
+                    attackStarted = false;
+                    if (!Attack())
+                    {
+                        ChangeState<PlayerIdleState>();
+                    }
+                }
+
             }
         }
         
@@ -853,7 +875,7 @@ public class PlayerController : MonoBehaviour
         foreach (var ray in hit)
         {
             if (ray.collider is null || ray.distance < 0.001) continue;
-            Debug.Log($"Расстояние {distance}");
+            Debug.Log($"Расстояние {ray.distance}");
             
             var aPlayer = ray.collider.gameObject.GetComponent<PlayerController>();
 
