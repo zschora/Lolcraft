@@ -15,11 +15,12 @@ public class GameManager : Singleton<GameManager>
 
     public PlayerController myOriginPlayer;
     public PlayerController myCurrentPlayer;
-    public PlayerController myCurrentMonster;
+    //public PlayerController myCurrentMonster;
     public System.Collections.Generic.List<PlayerController> myPlayers = new System.Collections.Generic.List<PlayerController>();
     public GameObject gameOverPanel;
     public Button restartButton;
     public PlayerCameraController playerCameraController;
+    public int deadMonsterCount = 0;
 
 
     private GameState currentState = GameState.MainMenu;
