@@ -33,7 +33,7 @@ public class ColliderSensor : MonoBehaviour {
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (myPlayerCollision != null) {
+        if (other.GetComponent<PlayerController>() is not null) {
             myPlayerCollision = null;
         }
         Debug.Log((myPlayerCollision != null) ? "Есть враг" : "Нет врага");
