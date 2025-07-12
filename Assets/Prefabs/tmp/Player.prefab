@@ -58,13 +58,13 @@ MonoBehaviour:
   deathCollider: {fileID: 0}
   isPlayable: 0
   hp: 50
-  damage: 10
-  damage_speed: 1
   move_speed: 1
   min_hp_to_takeover: 10
-  attackCooldown: 1
-  blockCooldown: 1
   isOrigin: 0
+  damage: 10
+  attackCooldown: 1
+  attackDelay: 2
+  blockCooldown: 1
   block_time: 0.2
   switchDelayTime: 1
   maxDistanceToAttackDistance: 4
@@ -205,7 +205,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.68}
+  m_Offset: {x: -0.07, y: 0.68}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -216,7 +216,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.88, y: 1.26}
+  m_Size: {x: 1.16, y: 1.26}
   m_EdgeRadius: 0
 --- !u!1 &5611468490137649647
 GameObject:

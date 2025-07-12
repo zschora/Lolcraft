@@ -12,8 +12,6 @@ public class PlayerController : MonoBehaviour
     //[SerializeField] float      m_rollForce = 6.0f;
     [SerializeField] bool m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
-    [SerializeField] BoxCollider2D lifeCollider;
-    [SerializeField] BoxCollider2D deathCollider;
 
     private Animator m_animator;
     private Rigidbody2D m_body2d;
@@ -195,7 +193,7 @@ public class PlayerController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Players");
     }
 
-    private void Attack()
+    private bool Attack()
     {
         //Physics2D.CircleCast((Vector2)attackSensorLeft.transform., 0.5, new Vector2(0,1));
         var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
@@ -207,8 +205,13 @@ public class PlayerController : MonoBehaviour
             if (myEnemy != null && !myEnemy.IsInState<PlayerBlockState>())
             {
                 myEnemy.MinusHP(damage);
+                return true;
+            } else
+            {
+                return false;
             }
         }
+        return false;
     }
 
     private void MinusHP(float value)
@@ -317,6 +320,10 @@ public class PlayerController : MonoBehaviour
 
     public void Death(bool toAnimate = true)
     {
+
+        //gameObject.layer = LayerMask.NameToLayer("DeadBodies" + GameManager.Instance.deadMonsterCount.ToString());
+        //GameManager.Instance.deadMonsterCount++;
+        //GetComponent<BoxCollider2D>().enabled = false;
         if (isOrigin)
         {
             Debug.Log("ГГ умер");
@@ -614,7 +621,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"aPlayerDetected: {aPlayerDetected}");
 
 
-        if (aPlayerDetected && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>())
+        if (aPlayerDetected && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>() && !attackStarted)
         {
             //if (GameManager.Instance.myCurrentMonster is null)
             //{
@@ -681,7 +688,7 @@ public class PlayerController : MonoBehaviour
         } else if (IsInState<PlayerAttackState>())
         {
             //Debug.Log($"Distance: {distance}");
-            if (!aPlayerDetected || distance > 0.55)
+            if (!aPlayerDetected)
             {
                 //if (GameManager.Instance.myCurrentMonster == this)
                 //{
@@ -713,9 +720,11 @@ public class PlayerController : MonoBehaviour
                 m_animator.SetTrigger("Attack" + m_currentAttack);
             } else if (attackStarted && attackElapsedTime > attackDelay)
             {
-                Attack();
-
                 attackStarted = false;
+                if (!Attack())
+                {
+                    ChangeState<PlayerIdleState>();
+                }
             }
         }
         

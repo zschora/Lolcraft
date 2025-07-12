@@ -5,7 +5,7 @@ public class MoveOnTrigger : MonoBehaviour
     [Header("ƒвижение")]
     public Vector3 pointA;
     public Vector3 pointB;
-    public float speed = 2f;
+    public float speed = 3f;
 
     [Header("—сылка на кнопку")]
     public ButtonController triggerButton;
