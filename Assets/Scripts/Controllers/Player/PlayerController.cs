@@ -433,6 +433,7 @@ public class PlayerController : MonoBehaviour
         m_timeSinceAttack += Time.deltaTime;
         m_timeSinceBlock += Time.deltaTime;
         attackFeedbackTimer += Time.deltaTime;
+        attackElapsedTime += Time.deltaTime;
 
         /*
         // Increase timer that checks roll duration
@@ -554,6 +555,8 @@ public class PlayerController : MonoBehaviour
         //Attack
         if (Input.GetMouseButtonDown(0) && m_timeSinceAttack > attackCooldown) // && !m_rolling)
         {
+            ChangeState<PlayerAttackState>();
+            /*
             Attack();
             ChangeState<PlayerAttackState>();
             m_animator.SetInteger("AnimState", 1);
@@ -572,6 +575,7 @@ public class PlayerController : MonoBehaviour
 
             // Reset timer
             m_timeSinceAttack = 0.0f;
+            */
         }
 
         // Block
@@ -627,9 +631,39 @@ public class PlayerController : MonoBehaviour
         }
 
         //Idle
-        else
+        else if (!IsInState<PlayerAttackState>())
         {
             ToIdle();
+        }
+
+        if (IsInState<PlayerAttackState>())
+        {
+            if (!attackStarted && m_timeSinceAttack > attackCooldown)
+            {
+                attackStarted = true;
+                attackElapsedTime = 0f;
+
+                // Reset timer  
+                m_timeSinceAttack = 0.0f;
+                m_currentAttack++;
+
+                // Loop back to one after third attack
+                if (m_currentAttack > 3)
+                    m_currentAttack = 1;
+
+                // Reset Attack combo if time since last attack is too large
+                if (m_timeSinceAttack > 1.0f)
+                    m_currentAttack = 1;
+
+                // Call one of three attack animations "Attack1", "Attack2", "Attack3"
+                m_animator.SetTrigger("Attack" + m_currentAttack);
+            }
+            else if (attackStarted && attackElapsedTime > attackDelay)
+            {
+                attackStarted = false;
+                Attack();
+                ChangeState<PlayerIdleState>();
+            }
         }
 
         Animate();
