@@ -23,6 +23,8 @@ public class MeshWordSwitcher2 : MonoBehaviour
             return;
         }
 
+        textMesh.GetComponent<MeshRenderer>().sortingOrder = 7;
+
         textMesh.text = "";
         StartCoroutine(WordSequence());
     }

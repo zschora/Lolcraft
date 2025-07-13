@@ -147,6 +147,11 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
+            if (isOrigin)
+            {
+                return;
+            }
+
             isPlayable = true;
             GameManager.Instance.myCurrentPlayer.isPlayable = false;
             //GameManager.Instance.myCurrentMonster = null;
@@ -240,7 +245,7 @@ public class PlayerController : MonoBehaviour
         aChangeColor.B = 0f;
         aChangeColor.A = 1f;
         aChangeColor.Change();
-        Debug.Log("КРАСНЫЙ");
+        //Debug.Log("КРАСНЫЙ");
     }
 
     class ChangeColor
@@ -340,7 +345,7 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    public void Death(bool toAnimate = true)
+    public void Death(bool toAnimate = true, bool takeover = false)
     {
 
         //gameObject.layer = LayerMask.NameToLayer("DeadBodies" + GameManager.Instance.deadMonsterCount.ToString());
@@ -354,12 +359,18 @@ public class PlayerController : MonoBehaviour
         }
         else if (isPlayable)
         {
-
-            Debug.Log("ГГ умер не в своем теле");
-            GameManager.Instance.playerCameraController.ChangeFollow(GameManager.Instance.myOriginPlayer.gameObject);
-            GameManager.Instance.myOriginPlayer.Death(false);
-            GameManager.Instance.myOriginPlayer.isSleep = false;
-            GameManager.Instance.ShowGameOver();
+            if (takeover)
+            {
+                GameManager.Instance.playerCameraController.ChangeFollow(GameManager.Instance.myOriginPlayer.gameObject);
+                GameManager.Instance.myOriginPlayer.WakeUp();
+            } else
+            {
+                Debug.Log("ГГ умер не в своем теле");
+                GameManager.Instance.playerCameraController.ChangeFollow(GameManager.Instance.myOriginPlayer.gameObject);
+                GameManager.Instance.myOriginPlayer.Death(false);
+                GameManager.Instance.myOriginPlayer.isSleep = false;
+                GameManager.Instance.ShowGameOver();
+            }
         }
 
         hp = 0;
@@ -378,13 +389,41 @@ public class PlayerController : MonoBehaviour
         CheckMonsterState(true);
     }
 
+    void FinalTakeover()
+    {
+        if (isOrigin) return;
+
+        int cnt = 0;
+        foreach (var aPlayer in GameManager.Instance.myPlayers) {
+            if (!aPlayer.isOrigin && !aPlayer.IsInState<PlayerDeathState>()) cnt++;
+        }
+        
+        if (cnt == 1)
+        {
+            isPlayable = false;
+            Death(true, true);
+            GameManager.Instance.myOriginPlayer.WakeUp();
+            GameManager.Instance.myOriginPlayer.isPlayable = true;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown("r"))
+        {
+            GameManager.Instance.RestartLevel();
+        }
+
         if (IsInState<PlayerDeathState>() && !isOrigin)
         {
             return;
         }
+
+        if (Input.GetKeyDown("f")) {
+            FinalTakeover();
+        }
+
         // Increase timers that controls attack and block
         m_timeSinceAttack += Time.deltaTime;
         m_timeSinceBlock += Time.deltaTime;
@@ -402,7 +441,7 @@ public class PlayerController : MonoBehaviour
         //Check if character just landed on the ground
         if (attackFeedbackTimer > attackFeedback && colorState == 4)
         {
-            Debug.Log("ИЗМЕНЕНИЕ ЦВЕТА");
+            //Debug.Log("ИЗМЕНЕНИЕ ЦВЕТА");
             CheckMonsterState(false);
             //Debug.Log("БЕЛЫЙ");
             //var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
@@ -427,7 +466,7 @@ public class PlayerController : MonoBehaviour
             m_animator.SetBool("Grounded", m_grounded);
         }
 
-        Debug.Log($"isPlayable {isPlayable} && isOrigin {isOrigin} && IsInState<PlayerDeathState>() {IsInState<PlayerDeathState>()})");
+        //Debug.Log($"isPlayable {isPlayable} && isOrigin {isOrigin} && IsInState<PlayerDeathState>() {IsInState<PlayerDeathState>()})");
 
         if (!isPlayable && !isOrigin && !IsInState<PlayerDeathState>())
         {
@@ -605,12 +644,12 @@ public class PlayerController : MonoBehaviour
     {
         if (IsInState<PlayerIdleState>())
         {
-            Debug.Log("Animate PlayerIdleState()");
+            //Debug.Log("Animate PlayerIdleState()");
             m_animator.SetInteger("AnimState", 0);
         }
         else if (IsInState<PlayerRunState>())
         {
-            Debug.Log("Animate PlayerRunState()");
+            //Debug.Log("Animate PlayerRunState()");
             m_animator.SetInteger("AnimState", 1);
         }
         /*
@@ -676,13 +715,13 @@ public class PlayerController : MonoBehaviour
         
         float distance;
         bool aPlayerDetected = DetectPlayer(out distance);
-        Debug.Log($"aPlayerDetected: {aPlayerDetected}");
+        //Debug.Log($"aPlayerDetected: {aPlayerDetected}");
 
         bool isAttackEnabled = false;
         var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
         //var myAttackSensor = attackSensorRight;
         isAttackEnabled = myAttackSensor.State() && myAttackSensor.myPlayerCollision is not null;
-        Debug.Log($"myAttackSensor.State(): {myAttackSensor.State()}, && myAttackSensor.myPlayerCollision is not null: {myAttackSensor.myPlayerCollision is not null}");
+        //Debug.Log($"myAttackSensor.State(): {myAttackSensor.State()}, && myAttackSensor.myPlayerCollision is not null: {myAttackSensor.myPlayerCollision is not null}");
 
         if (aPlayerDetected && !isAttackEnabled && !IsInState<PlayerRunState>())// && !IsInState<PlayerAttackState>())
         {
@@ -901,7 +940,7 @@ public class PlayerController : MonoBehaviour
         foreach (var ray in hit)
         {
             if (ray.collider is null || ray.distance < 0.001) continue;
-            Debug.Log($"Расстояние {ray.distance}");
+            //Debug.Log($"Расстояние {ray.distance}");
             
             var aPlayer = ray.collider.gameObject.GetComponent<PlayerController>();
 
@@ -913,7 +952,7 @@ public class PlayerController : MonoBehaviour
                     break;
                 }
 
-                Debug.Log($"Обнаружен плеер на расстоянии {distance}, игрок: {aPlayer.isPlayable}");
+                //Debug.Log($"Обнаружен плеер на расстоянии {distance}, игрок: {aPlayer.isPlayable}");
                 return aPlayer.isPlayable;
             }
         }

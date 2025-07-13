@@ -2658,7 +2658,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7516010433554390597, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: attackDelay
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 7516010433554390597, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: min_hp_to_takeover
@@ -2880,7 +2880,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4969029062708885078, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5673654133138282934, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_Layer
@@ -3012,6 +3012,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2085895882962908688, guid: 8327e926c2b06b448aac2983e69c235c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -6.51
+      objectReference: {fileID: 0}
     - target: {fileID: 4114752098386733154, guid: 8327e926c2b06b448aac2983e69c235c, type: 3}
       propertyPath: m_Name
       value: TextManager
@@ -3055,6 +3059,10 @@ PrefabInstance:
     - target: {fileID: 8324740499138177962, guid: 8327e926c2b06b448aac2983e69c235c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8938636468535887781, guid: 8327e926c2b06b448aac2983e69c235c, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
