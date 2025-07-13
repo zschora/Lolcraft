@@ -290,14 +290,16 @@ public class PlayerController : MonoBehaviour
             if (colorState != 2)
             {
                 var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
-                aChangeColor.R = 240f / 255f;
-                aChangeColor.G = 100f / 255f;
-                aChangeColor.B = 100f / 255f;
+                aChangeColor.R = 100f / 255f;
+                aChangeColor.G = 250f / 255f;
+                aChangeColor.B = 50f / 255f;
                 aChangeColor.Change();
 
                 colorState = 2;
                 Debug.Log("color state to 2");
             }
+
+            return;
         }
         else if (hp - min_hp_to_takeover < 0.1)
         { // before takeover
@@ -422,6 +424,8 @@ public class PlayerController : MonoBehaviour
             m_grounded = false;
             m_animator.SetBool("Grounded", m_grounded);
         }
+
+        Debug.Log($"isPlayable {isPlayable} && isOrigin {isOrigin} && IsInState<PlayerDeathState>() {IsInState<PlayerDeathState>()})");
 
         if (!isPlayable && !isOrigin && !IsInState<PlayerDeathState>())
         {
@@ -642,13 +646,32 @@ public class PlayerController : MonoBehaviour
         */
     }
 
+    ColliderSensor MyAttackSensor()
+    {
+        return isRightOriented ? attackSensorRight : attackSensorLeft;
+    }
+    void ToggleFreezeXIf(Rigidbody2D rb, bool condition)
+    {
+        if (condition)
+        {
+            // Применяем ограничение — например, замораживаем позицию по X и вращение по всем осям
+            rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        }
+        else
+        {
+            // Снимаем все ограничения
+            rb.constraints = RigidbodyConstraints2D.None;
+        }
+    }
+
     void AIUpdate()
     {
+        ToggleFreezeXIf(GetComponent<Rigidbody2D>(), MyAttackSensor().HasPlayer());
+
         switchTime += Time.deltaTime;
         m_timeSinceAttack += Time.deltaTime;
         attackElapsedTime += Time.deltaTime;
         
-
         float distance;
         bool aPlayerDetected = DetectPlayer(out distance);
         Debug.Log($"aPlayerDetected: {aPlayerDetected}");
@@ -657,8 +680,9 @@ public class PlayerController : MonoBehaviour
         var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
         //var myAttackSensor = attackSensorRight;
         isAttackEnabled = myAttackSensor.State() && myAttackSensor.myPlayerCollision is not null;
+        Debug.Log($"myAttackSensor.State(): {myAttackSensor.State()}, && myAttackSensor.myPlayerCollision is not null: {myAttackSensor.myPlayerCollision is not null}");
 
-        if (aPlayerDetected && !isAttackEnabled && !IsInState<PlayerRunState>() && !IsInState<PlayerAttackState>())
+        if (aPlayerDetected && !isAttackEnabled && !IsInState<PlayerRunState>())// && !IsInState<PlayerAttackState>())
         {
             //if (GameManager.Instance.myCurrentMonster is null)
             //{

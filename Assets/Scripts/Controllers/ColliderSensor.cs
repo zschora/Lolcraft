@@ -24,6 +24,11 @@ public class ColliderSensor : MonoBehaviour {
         return m_ColCount > 0;
     }
 
+    public bool HasPlayer()
+    {
+        return State() && myPlayerCollision is not null;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         myPlayerCollision = other.GetComponent<PlayerController>();
