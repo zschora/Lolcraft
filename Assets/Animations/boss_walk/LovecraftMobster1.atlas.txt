@@ -1,0 +1,48 @@
+
+LovecraftMobster1.png
+size: 2219,598
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Eye
+  rotate: false
+  xy: 1488, 2
+  size: 235, 133
+  orig: 1082, 1922
+  offset: 364, 1348
+  index: -1
+FrontPart
+  rotate: true
+  xy: 744, 57
+  size: 539, 742
+  orig: 1082, 1922
+  offset: 62, 1134
+  index: -1
+FrontPart2
+  rotate: false
+  xy: 2, 22
+  size: 740, 574
+  orig: 1082, 1922
+  offset: 295, 1191
+  index: -1
+Inside
+  rotate: false
+  xy: 1488, 137
+  size: 467, 459
+  orig: 1082, 1922
+  offset: 294, 1197
+  index: -1
+Pupil
+  rotate: false
+  xy: 1725, 73
+  size: 51, 62
+  orig: 1082, 1922
+  offset: 501, 1420
+  index: -1
+Tongue
+  rotate: true
+  xy: 1957, 90
+  size: 506, 260
+  orig: 1082, 1922
+  offset: 555, 1329
+  index: -1

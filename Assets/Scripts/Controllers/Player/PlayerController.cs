@@ -215,6 +215,11 @@ public class PlayerController : MonoBehaviour
             if (myEnemy != null && !myEnemy.IsInState<PlayerBlockState>())
             {
                 myEnemy.MinusHP(damage);
+                Debug.Log($"isRightOriented: {isRightOriented}, myEnemy.isRightOriented: {myEnemy.isRightOriented}");
+                if (isRightOriented == myEnemy.isRightOriented) {
+                    myEnemy.SwitchDirection(false);
+                }
+
                 return true;
             } else
             {
@@ -707,7 +712,8 @@ public class PlayerController : MonoBehaviour
 
     void AIUpdate()
     {
-        ToggleFreezeXIf(GetComponent<Rigidbody2D>(), MyAttackSensor().HasPlayer());
+        ToggleFreezeXIf(GetComponent<Rigidbody2D>(),
+            attackSensorLeft.HasPlayer() || attackSensorRight.HasPlayer());
 
         switchTime += Time.deltaTime;
         m_timeSinceAttack += Time.deltaTime;
@@ -900,14 +906,14 @@ public class PlayerController : MonoBehaviour
         */
     }
 
-    private void SwitchDirection()
+    private void SwitchDirection(bool checkDelay = true)
     {
         if (IsInState<PlayerDeathState>())
         {
             return;
         }
 
-        if (switchTime > switchDelayTime)
+        if (!checkDelay || switchTime > switchDelayTime)
         {
             if (isRightOriented)
             {
