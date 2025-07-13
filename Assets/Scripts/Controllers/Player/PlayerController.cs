@@ -207,6 +207,7 @@ public class PlayerController : MonoBehaviour
     {
         //Physics2D.CircleCast((Vector2)attackSensorLeft.transform., 0.5, new Vector2(0,1));
         var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
+        //var myAttackSensor = attackSensorLeft;
         //var myAttackSensor = attackSensorRight;
         if (myAttackSensor.State())
         {
@@ -409,7 +410,10 @@ public class PlayerController : MonoBehaviour
             Death(true, true);
             GameManager.Instance.myOriginPlayer.WakeUp();
             GameManager.Instance.myOriginPlayer.isPlayable = true;
+
+            GameManager.Instance.playerCameraController.ChangeFollow(GameManager.Instance.myOriginPlayer.gameObject);
         }
+
     }
 
     // Update is called once per frame
@@ -510,15 +514,19 @@ public class PlayerController : MonoBehaviour
         float inputX = Input.GetAxis("Horizontal");
 
         // Swap direction of sprite depending on walk direction
-        if (inputX > 0)
+        if (inputX > 0 && m_facingDirection == -1)
         {
             GetComponent<SpriteRenderer>().flipX = false;
+            //transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+
             m_facingDirection = 1;
         }
 
-        else if (inputX < 0)
+        else if (inputX < 0 && m_facingDirection == 1)
         {
             GetComponent<SpriteRenderer>().flipX = true;
+            //transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+
             m_facingDirection = -1;
         }
 
@@ -645,18 +653,9 @@ public class PlayerController : MonoBehaviour
 
                 // Reset timer  
                 m_timeSinceAttack = 0.0f;
-                m_currentAttack++;
-
-                // Loop back to one after third attack
-                if (m_currentAttack > 3)
-                    m_currentAttack = 1;
-
-                // Reset Attack combo if time since last attack is too large
-                if (m_timeSinceAttack > 1.0f)
-                    m_currentAttack = 1;
 
                 // Call one of three attack animations "Attack1", "Attack2", "Attack3"
-                m_animator.SetTrigger("Attack" + m_currentAttack);
+                m_animator.SetTrigger("Attack1");
             }
             else if (attackStarted && attackElapsedTime > attackDelay)
             {
@@ -856,18 +855,9 @@ public class PlayerController : MonoBehaviour
 
                     // Reset timer  
                     m_timeSinceAttack = 0.0f;
-                    m_currentAttack++;
-
-                    // Loop back to one after third attack
-                    if (m_currentAttack > 3)
-                        m_currentAttack = 1;
-
-                    // Reset Attack combo if time since last attack is too large
-                    if (m_timeSinceAttack > 1.0f)
-                        m_currentAttack = 1;
 
                     // Call one of three attack animations "Attack1", "Attack2", "Attack3"
-                    m_animator.SetTrigger("Attack" + m_currentAttack);
+                    m_animator.SetTrigger("Attack1");
                 }
                 else if (attackStarted && attackElapsedTime > attackDelay)
                 {
@@ -947,11 +937,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        //transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         if (!checkDelay || switchTime > switchDelayTime)
         {
             if (isRightOriented)
             {
                 GetComponent<SpriteRenderer>().flipX = true;
+
                 m_facingDirection = -1;
                 isRightOriented = false;
             }
@@ -959,6 +951,7 @@ public class PlayerController : MonoBehaviour
             {
 
                 GetComponent<SpriteRenderer>().flipX = false;
+
                 m_facingDirection = 1;
                 isRightOriented = true;
             }
