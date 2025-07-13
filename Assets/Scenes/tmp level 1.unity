@@ -1166,7 +1166,11 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+<<<<<<< HEAD
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1 &475312929
 GameObject:
   m_ObjectHideFlags: 0
@@ -1348,7 +1352,12 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1001 &515536129
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1567,7 +1576,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1001 &562095883
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1695,7 +1707,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1 &601124184
 GameObject:
   m_ObjectHideFlags: 0
@@ -2036,12 +2053,20 @@ PrefabInstance:
       value: 0.249
       objectReference: {fileID: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 4099079144026223108, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 4881479641926598159, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.23
@@ -2614,6 +2639,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1001 &980937097
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2760,6 +2786,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
 --- !u!1 &986203875
 GameObject:
   m_ObjectHideFlags: 0
@@ -3226,6 +3254,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 1126838675}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1001 &1129149236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3293,6 +3322,8 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 297128ae9ffd84b48bbff616757585a9, type: 3}
 --- !u!1 &1317867082
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1 &1434190820
 >>>>>>> 0f7efb5 (fixed)
 GameObject:
@@ -3514,6 +3545,7 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1001 &1419987998
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3689,6 +3721,10 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 297128ae9ffd84b48bbff616757585a9, type: 3}
 =======
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1 &1537686346
 GameObject:
   m_ObjectHideFlags: 3
@@ -3905,6 +3941,7 @@ Transform:
   m_Children:
   - {fileID: 2096138266}
 <<<<<<< HEAD
+<<<<<<< HEAD
   - {fileID: 943564940}
   - {fileID: 1717607383}
   - {fileID: 475312930}
@@ -3915,6 +3952,12 @@ Transform:
   - {fileID: 475312930}
   - {fileID: 1434190821}
 >>>>>>> 0f7efb5 (fixed)
+=======
+  - {fileID: 475312930}
+  - {fileID: 1434190821}
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
   - {fileID: 1756546889}
   - {fileID: 601124185}
   - {fileID: 136132045}
@@ -4523,8 +4566,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1531020978322804756, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_LocalPosition.y
+<<<<<<< HEAD
       value: -2.97
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+      value: -2.69
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
       objectReference: {fileID: 0}
     - target: {fileID: 1531020978322804756, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4563,12 +4613,20 @@ PrefabInstance:
       value: 0.249
       objectReference: {fileID: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 4099079144026223108, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 4881479641926598159, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.23
@@ -4637,7 +4695,10 @@ PrefabInstance:
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1001 &2049425321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4711,7 +4772,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5400ded3042a5ea44a0adad95f421cc4, type: 3}
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
 --- !u!1 &2057719121
 GameObject:
   m_ObjectHideFlags: 0
@@ -5172,7 +5238,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4754670138739986743, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
       propertyPath: m_LocalPosition.x
+<<<<<<< HEAD
       value: 11.55
+=======
+      value: 10.46
+>>>>>>> 7ff4e40 (added new scene tutorial)
       objectReference: {fileID: 0}
     - target: {fileID: 4754670138739986743, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5297,12 +5367,20 @@ PrefabInstance:
       value: 0.237
       objectReference: {fileID: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 4099079144026223108, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 4881479641926598159, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.266
@@ -5320,12 +5398,20 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 7042643684919620825, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_SortingOrder
       value: 7
       objectReference: {fileID: 0}
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 7516010433554390597, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: isOrigin
       value: 1
@@ -5351,12 +5437,20 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
     - target: {fileID: 8699985954117944733, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+<<<<<<< HEAD
 >>>>>>> 0f7efb5 (fixed)
+=======
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
+>>>>>>> 2bc3a38 (added new scene tutorial)
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5483,7 +5577,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 613730720244969634, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_LocalScale.x
+<<<<<<< HEAD
       value: 4.209919
+=======
+      value: 2.3704498
+>>>>>>> 7ff4e40 (added new scene tutorial)
       objectReference: {fileID: 0}
     - target: {fileID: 613730720244969634, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_LocalScale.y
@@ -5583,7 +5681,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4969029062708885078, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_Layer
+<<<<<<< HEAD
       value: 0
+=======
+      value: 8
+>>>>>>> 7ff4e40 (added new scene tutorial)
       objectReference: {fileID: 0}
     - target: {fileID: 4969029062708885078, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_IsActive
@@ -5607,7 +5709,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6732444238090848829, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_Layer
+<<<<<<< HEAD
       value: 0
+=======
+      value: 8
+>>>>>>> 7ff4e40 (added new scene tutorial)
       objectReference: {fileID: 0}
     - target: {fileID: 6778679812473361413, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_LocalScale.x
@@ -5643,7 +5749,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7773902488595459740, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_Layer
+<<<<<<< HEAD
       value: 0
+=======
+      value: 8
+>>>>>>> 7ff4e40 (added new scene tutorial)
       objectReference: {fileID: 0}
     - target: {fileID: 8157784276246108547, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_Layer
@@ -5803,13 +5913,21 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 1708949733}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 2bc3a38 (added new scene tutorial)
   - {fileID: 562095883}
 >>>>>>> 0f7efb5 (fixed)
   - {fileID: 3710946858440038901}
   - {fileID: 778664899}
   - {fileID: 2029408532}
   - {fileID: 980937097}
+=======
+  - {fileID: 3710946858440038901}
+  - {fileID: 778664899}
+  - {fileID: 2029408532}
+>>>>>>> 7ff4e40 (added new scene tutorial)
   - {fileID: 1590573083}
   - {fileID: 370922525}
   - {fileID: 67173374}
@@ -5835,7 +5953,10 @@ SceneRoots:
   - {fileID: 1579454911989983774}
   - {fileID: 5496705269437622716}
   - {fileID: 1715510343}
+<<<<<<< HEAD
   - {fileID: 2049425321}
+=======
+>>>>>>> 7ff4e40 (added new scene tutorial)
   - {fileID: 515536129}
   - {fileID: 45242083}
   - {fileID: 8998341216188686346}
