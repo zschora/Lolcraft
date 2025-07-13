@@ -173,7 +173,7 @@ public class PlayerController : MonoBehaviour
             GameManager.Instance.myCurrentPlayer = this;
             GameManager.Instance.playerCameraController.ChangeFollow(gameObject);
 
-            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
         CheckMonsterState(CheckDeath());
@@ -706,7 +706,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             // Снимаем все ограничения
-            rb.constraints = RigidbodyConstraints2D.None;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
     }
 
