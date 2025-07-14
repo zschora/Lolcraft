@@ -497,7 +497,7 @@ public class PlayerController : MonoBehaviour
             GameManager.Instance.RestartLevel();
         }
 
-        if (IsInState<PlayerDeathState>() && !isOrigin)
+        if (IsInState<PlayerDeathState>() && !isOrigin || GameManager.Instance.menuOver)
         {
             return;
         }

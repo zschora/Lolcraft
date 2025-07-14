@@ -8,6 +8,10 @@ public class UICanvasController : MonoBehaviour
     [SerializeField] private GameObject menuPanel; // Канвас с меню
     private bool isMenuOpen = false;
 
+    private void Start()
+    {
+        DontDestroyOnLoad(menuPanel);
+    }
 
     void Update()
     {
@@ -15,12 +19,18 @@ public class UICanvasController : MonoBehaviour
         {
             ToggleMenu();
         }
+
+        if (isMenuOpen && GameManager.Instance.menuOver != true)
+        {
+            GameManager.Instance.menuOver = true;
+        }
     }
 
     public void RestartLevel()
     {
-        menuPanel.SetActive(false);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GameManager.Instance.RestartLevel();
+        //menuPanel.SetActive(false);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
    
@@ -46,6 +56,8 @@ public class UICanvasController : MonoBehaviour
         menuPanel.SetActive(true);
         isMenuOpen = true;
         EventSystem.current.SetSelectedGameObject(null);
+        GameManager.Instance.menuOver = true;
+        GameManager.Instance.menuEntered = true;
     }
 
     public void CloseMenu()
@@ -55,6 +67,8 @@ public class UICanvasController : MonoBehaviour
         menuPanel.SetActive(false);
         isMenuOpen = false;
         EventSystem.current.SetSelectedGameObject(null);
+        GameManager.Instance.menuOver = false;
+        GameManager.Instance.menuEntered = false;
     }
 
 

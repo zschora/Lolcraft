@@ -28,8 +28,11 @@ public class GameManager : Singleton<GameManager>
     // События для подписки других скриптов
     public delegate void OnStateChanged(GameState newState);
     public event OnStateChanged onStateChanged;
+    UICanvasController uiScript;
+    public bool menuOver = false;
+    public bool menuEntered = false;
 
-    
+
     // Свойство для получения текущего состояния
     public GameState CurrentState 
     { 
@@ -40,14 +43,14 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
         SceneManager.sceneLoaded += OnSceneLoaded;
-        var gameOverCanvas = GameObject.Find("GameOverCanvas");
-        //restartButton.onClick.AddListener(RestartLevel);
-        gameOverPanel.SetActive(true);
-        gameOverPanel.SetActive(false);
+        var UI = GameObject.Find("UI");
+        uiScript = UI.GetComponentInChildren<UICanvasController>();
 
-        //DontDestroyOnLoad(gameOverPanel);
-        //DontDestroyOnLoad(restartButton);
-        DontDestroyOnLoad(gameOverCanvas);
+        //restartButton.onClick.AddListener(RestartLevel);
+        //uiScript.ToggleMenu();
+        //uiScript.ToggleMenu();
+
+        DontDestroyOnLoad(UI);
     }
     
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -131,7 +134,10 @@ public class GameManager : Singleton<GameManager>
         myPlayers.Clear();
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        gameOverPanel.SetActive(false);
+        uiScript.CloseMenu();
+        menuOver = false;
+        //gameOverPanel.SetActive(false);
+        //uiScript.CloseMenu();
         //ChangeState(GameState.Playing);
     }
 
@@ -140,7 +146,8 @@ public class GameManager : Singleton<GameManager>
         if (gameOverPanel is not null)
         {
             //Debug.Log("ShowGameOver(), gameOverPanel not null");
-            gameOverPanel.SetActive(true);
+            //gameOverPanel.SetActive(true);
+            uiScript.OpenMenu();
             //Time.timeScale = 0f; // останавливает игру
         } else
         {
