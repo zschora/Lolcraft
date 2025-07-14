@@ -18,7 +18,7 @@ public class GameManager : Singleton<GameManager>
     //public PlayerController myCurrentMonster;
     public System.Collections.Generic.List<PlayerController> myPlayers = new System.Collections.Generic.List<PlayerController>();
     public GameObject gameOverPanel;
-    public Button restartButton;
+    //public Button restartButton;
     public PlayerCameraController playerCameraController;
     public int deadMonsterCount = 0;
 
@@ -41,7 +41,7 @@ public class GameManager : Singleton<GameManager>
         base.Awake();
         SceneManager.sceneLoaded += OnSceneLoaded;
         var gameOverCanvas = GameObject.Find("GameOverCanvas");
-        restartButton.onClick.AddListener(RestartLevel);
+        //restartButton.onClick.AddListener(RestartLevel);
         gameOverPanel.SetActive(true);
         gameOverPanel.SetActive(false);
 

@@ -19,6 +19,7 @@ public class UICanvasController : MonoBehaviour
 
     public void RestartLevel()
     {
+        menuPanel.SetActive(false);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
