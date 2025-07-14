@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Spine.Unity;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
 
-    private Animator m_animator;
+    [SerializeField] private Animator m_animator;
     private Rigidbody2D m_body2d;
     private StateMachine stateMachine;
     private ColliderSensor m_groundSensor;
@@ -44,13 +45,15 @@ public class PlayerController : MonoBehaviour
     [Header("Attack settings")]
     public float damage = 10; // 25
     public float attackCooldown = 3f;
-    [SerializeField] private float attackDelay = 2f; // когда именно ударить после начала анимации
+    [SerializeField] private float attackDelay = 0.2f; // когда именно ударить после начала анимации
     private bool attackStarted = false;
     [SerializeField] private float attackFeedback = 0.2f;
     private float attackFeedbackTimer = 0f;
     private float attackElapsedTime = 0f;
     public float blockCooldown = 0f;
     public float block_time = 1f;
+
+    public SkeletonMecanim aSM;
 
 
     [Header("MonsterSettings")]
@@ -62,6 +65,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask detectionLayer;
     [SerializeField] private float rayHeight = 1.2f;
 
+    Color currentColor = Color.white;
+    [SerializeField] private Transform aMecanimTransform;
 
 
     public bool IsGrounded
@@ -72,6 +77,7 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        //aSM.Skeleton.SetColor(Color.red);
         if (isPlayable)
         {
             if (isOrigin)
@@ -87,7 +93,8 @@ public class PlayerController : MonoBehaviour
             Debug.Log($"Игрок добавлен, всего игроков: {GameManager.Instance.myPlayers.Count}");
         }
 
-        m_animator = GetComponent<Animator>();
+        // m_animator = GetComponent<Animator>();
+        m_body2d = GetComponent<Rigidbody2D>();
         m_body2d = GetComponent<Rigidbody2D>();
         m_groundSensor = transform.Find("GroundSensor").GetComponent<ColliderSensor>();
         attackSensorLeft = transform.Find("AttackSensorLeft").GetComponent<ColliderSensor>();
@@ -184,7 +191,7 @@ public class PlayerController : MonoBehaviour
         isSleep = true;
         //Debug.Log("Уснул");
         ChangeState<PlayerDeathState>();
-        m_animator.SetBool("noBlood", m_noBlood);
+        //m_animator.SetBool("noBlood", m_noBlood);
         m_animator.SetTrigger("Death");
 
         GetComponent<BoxCollider2D>().size = new Vector2(2.18f, 0.52f);
@@ -203,23 +210,53 @@ public class PlayerController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Players");
     }
 
+    public void FlipX()
+    {
+        isRightOriented = !isRightOriented;
+        m_facingDirection *= -1;
+        //aSM.skeleton.FlipX = true;
+    }
+
     private bool Attack()
     {
-        //Physics2D.CircleCast((Vector2)attackSensorLeft.transform., 0.5, new Vector2(0,1));
         var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
-        //var myAttackSensor = attackSensorLeft;
-        //var myAttackSensor = attackSensorRight;
         if (myAttackSensor.State())
         {
             //Debug.Log("Есть враг");
             var myEnemy = myAttackSensor.myPlayerCollision;
-            if (myEnemy != null && !myEnemy.IsInState<PlayerBlockState>())
+            if (myEnemy is not null && !myEnemy.IsInState<PlayerBlockState>())
             {
+                if (isPlayable && isRightOriented == myEnemy.isRightOriented) {
+                    myEnemy.FlipX();
+                    myEnemy.switchTime = 0;
+                    /*
+                    if (myEnemy.isRightOriented)
+                    {
+                        //aSM.initialFlipX = true;
+                        //myEnemy.aSM.Skeleton.FlipX = true;
+                        myEnemy.GetComponent<SpriteRenderer>().flipX = true;
+
+
+                        myEnemy.m_facingDirection = -1;
+                        myEnemy.isRightOriented = false;
+
+                        //m_facingDirection = -1;
+                        //isRightOriented = false;
+                    }
+                    else
+                    {
+                        //aSM.initialFlipX = false;
+                        //myEnemy.aSM.Skeleton.FlipX = false;
+                        myEnemy.GetComponent<SpriteRenderer>().flipX = false;
+
+                        myEnemy.m_facingDirection = 1;
+                        myEnemy.isRightOriented = true;
+                    }
+                    */
+                }
+
                 myEnemy.MinusHP(damage);
                 Debug.Log($"isRightOriented: {isRightOriented}, myEnemy.isRightOriented: {myEnemy.isRightOriented}");
-                if (isRightOriented == myEnemy.isRightOriented) {
-                    myEnemy.SwitchDirection(false);
-                }
 
                 return true;
             } else
@@ -242,7 +279,8 @@ public class PlayerController : MonoBehaviour
         bool isDead = CheckDeath();
         CheckMonsterState(isDead);
         Debug.Log($"Аттака на {value}, осталось {hp}, умер: {isDead}");
-        
+
+        /*
         attackFeedbackTimer = 0;
         colorState = 4;
         var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
@@ -252,29 +290,36 @@ public class PlayerController : MonoBehaviour
         aChangeColor.A = 1f;
         aChangeColor.Change();
         //Debug.Log("КРАСНЫЙ");
+        */
+
+        StartCoroutine(FlashRed());
     }
 
     class ChangeColor
     {
-        private SpriteRenderer m_renderer;
+        //private SpriteRenderer m_renderer;
+        private SkeletonMecanim aSM;
 
-        public float R, G, B, A;
-        public ChangeColor(SpriteRenderer renderer)
+        public float R = 1, G = 1, B = 1, A = 1;
+        public ChangeColor(SkeletonMecanim aSM)
         {
-            m_renderer = renderer;
+            //m_renderer = renderer;
+            this.aSM = aSM;
 
-            var aColor = m_renderer.color;
-            R = aColor.r;
-            G = aColor.g;
-            B = aColor.b;
-            A = aColor.a;
+            //var aColor = m_renderer.color;
+            //R = aColor.r;
+            //G = aColor.g;
+            //B = aColor.b;
+            //A = aColor.a;
             Debug.Log($"r:{R}, g: {G}, b: {B}, a: {A}");
         }
 
         public void Change()
         {
             var aNewColor = new Color(R, G, B, A);
-            m_renderer.color = aNewColor;
+
+            aSM.skeleton.SetColor(aNewColor);
+            //m_renderer.color = aNewColor;
         }
     }
 
@@ -284,12 +329,17 @@ public class PlayerController : MonoBehaviour
         {
             if (colorState != 0)
             {
-                var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
+                var aChangeColor = new ChangeColor(aSM);
                 aChangeColor.R = 1f;
                 aChangeColor.G = 1f;
                 aChangeColor.B = 1f;
                 aChangeColor.A = 1f;
                 aChangeColor.Change();
+
+                currentColor = new Color(aChangeColor.R, aChangeColor.G, aChangeColor.B, aChangeColor.A);
+
+
+                //aSM.Skeleton.SetColor(Color.white);
 
                 colorState = 0;
                 Debug.Log("color state to 0 before death");
@@ -302,11 +352,14 @@ public class PlayerController : MonoBehaviour
         { // not dead after takeover
             if (colorState != 2)
             {
-                var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
-                aChangeColor.R = 100f / 255f;
-                aChangeColor.G = 250f / 255f;
-                aChangeColor.B = 50f / 255f;
+                var aChangeColor = new ChangeColor(aSM);
+                aChangeColor.R = 50f / 255f;
+                aChangeColor.G = 50f / 255f;
+                aChangeColor.B = 250f / 255f;
                 aChangeColor.Change();
+
+                currentColor = new Color(aChangeColor.R, aChangeColor.G, aChangeColor.B, aChangeColor.A);
+                //aSM.Skeleton.SetColor(Color.yellow);
 
                 colorState = 2;
                 Debug.Log("color state to 2");
@@ -320,11 +373,14 @@ public class PlayerController : MonoBehaviour
             {
 
                 Debug.Log("color state to 1");
-                var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
-                aChangeColor.R = 216f / 255f;
-                aChangeColor.G = 238f / 255f;
-                aChangeColor.B = 97f / 255f;
+                var aChangeColor = new ChangeColor(aSM);
+                aChangeColor.R = 50f / 255f;
+                aChangeColor.G = 250f / 255f;
+                aChangeColor.B = 50f / 255f;
                 aChangeColor.Change();
+
+                currentColor = new Color(aChangeColor.R, aChangeColor.G, aChangeColor.B, aChangeColor.A);
+                //aSM.Skeleton.SetColor(Color.green);
 
                 colorState = 1;
             }
@@ -333,12 +389,15 @@ public class PlayerController : MonoBehaviour
         }
         colorState = 0;
         Debug.Log("БЕЛЫЙ");
-        var aChangeColor2 = new ChangeColor(GetComponent<SpriteRenderer>());
+        var aChangeColor2 = new ChangeColor(aSM);
         aChangeColor2.R = 1f;
         aChangeColor2.G = 1f;
         aChangeColor2.B = 1f;
         aChangeColor2.A = 1f;
         aChangeColor2.Change();
+
+        currentColor = new Color(aChangeColor2.R, aChangeColor2.G, aChangeColor2.B, aChangeColor2.A);
+        //aSM.Skeleton.SetColor(Color.white);
     }
 
     private bool CheckDeath()
@@ -385,7 +444,7 @@ public class PlayerController : MonoBehaviour
 
         if (toAnimate)
         {
-            m_animator.SetBool("noBlood", m_noBlood);
+            //m_animator.SetBool("noBlood", m_noBlood);
             m_animator.SetTrigger("Death");
         }
 
@@ -416,6 +475,20 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private IEnumerator FlashRed()
+    {
+        //var renderer = GetComponent<SpriteRenderer>();
+        //var originalColor = renderer.color;
+        //renderer.color = Color.red;
+        aSM.Skeleton.SetColor(Color.red);
+
+        yield return new WaitForSeconds(0.2f); // длительность красного
+        colorState = 4;
+
+        CheckMonsterState(false); // вернёт цвет согласно текущему состоянию
+    }
+
+
     // Update is called once per frame
     void Update()
     {
@@ -429,7 +502,16 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown("f")) {
+        if (isOrigin && aSM.skeleton.FlipX != isRightOriented)
+        {
+            aSM.skeleton.FlipX = isRightOriented;
+        } else if (!isOrigin && aSM.skeleton.FlipX == isRightOriented)
+        {
+            aSM.skeleton.FlipX = !isRightOriented;
+        }
+
+        if (Input.GetKeyDown("f"))
+        {
             FinalTakeover();
         }
 
@@ -452,7 +534,7 @@ public class PlayerController : MonoBehaviour
         if (attackFeedbackTimer > attackFeedback && colorState == 4)
         {
             //Debug.Log("ИЗМЕНЕНИЕ ЦВЕТА");
-            CheckMonsterState(false);
+            //CheckMonsterState(false);
             //Debug.Log("БЕЛЫЙ");
             //var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
             //aChangeColor.R = 1f;
@@ -493,14 +575,28 @@ public class PlayerController : MonoBehaviour
         // Check block
         if (IsInState<PlayerBlockState>())
         {
+            Debug.Log($"time in block: {stateMachine.GetCurrentState().ActiveTime}");
             if (stateMachine.GetCurrentState().ActiveTime > block_time)
             {
                 ChangeState<PlayerIdleState>();
-                var aRenderer = GetComponent<SpriteRenderer>();
-                var aNewColor = aRenderer.color;
-                aNewColor.a = 1f;
-                aRenderer.color = aNewColor;
+                var aChangeColor = new ChangeColor(aSM);
+                aChangeColor.R = currentColor.r;
+                aChangeColor.G = currentColor.g;
+                aChangeColor.B = currentColor.b;
+                aChangeColor.A = currentColor.a;
+                aChangeColor.Change();
+                Debug.Log($"Check block: {aChangeColor.R}, {aChangeColor.G}, {aChangeColor.B}, {aChangeColor.A}");
+
+                //var aRenderer = GetComponent<SpriteRenderer>();
+                //var aNewColor = aRenderer.color;
+                //aNewColor.a = 1f;
+                //aRenderer.color = aNewColor;
                 //m_animator.SetBool("IdleBlock", false);
+
+
+                var aPos = aMecanimTransform.position;
+                aPos.x += 0.6f;
+                aMecanimTransform.position = aPos;
             }
             return;
             /*{
@@ -516,6 +612,8 @@ public class PlayerController : MonoBehaviour
         // Swap direction of sprite depending on walk direction
         if (inputX > 0 && m_facingDirection == -1)
         {
+            //aSM.initialFlipX = true;
+            aSM.skeleton.FlipX = true;
             GetComponent<SpriteRenderer>().flipX = false;
             //transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
 
@@ -524,6 +622,8 @@ public class PlayerController : MonoBehaviour
 
         else if (inputX < 0 && m_facingDirection == 1)
         {
+            //aSM.initialFlipX = false;
+            aSM.skeleton.FlipX = false;
             GetComponent<SpriteRenderer>().flipX = true;
             //transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
 
@@ -594,10 +694,21 @@ public class PlayerController : MonoBehaviour
 
             ChangeState<PlayerBlockState>();
 
-            var aRenderer = GetComponent<SpriteRenderer>();
-            var aNewColor = aRenderer.color;
-            aNewColor.a = 0.5f;
-            aRenderer.color = aNewColor;
+            var aChangeColor = new ChangeColor(aSM);
+            aChangeColor.R = currentColor.r;
+            aChangeColor.G = currentColor.g;
+            aChangeColor.B = currentColor.b;
+            aChangeColor.A = 0.5f;
+            //aChangeColor.Change();
+
+            var aPos = aMecanimTransform.position;
+            aPos.x -= 0.6f;
+            aMecanimTransform.position = aPos;
+
+            //var aRenderer = GetComponent<SpriteRenderer>();
+            //var aNewColor = aRenderer.color;
+            //aNewColor.a = 0.5f;
+            //aRenderer.color = aNewColor;
             //m_animator.SetTrigger("Block");
             //m_animator.SetBool("IdleBlock", true);
             m_timeSinceBlock = 0f;
@@ -656,6 +767,7 @@ public class PlayerController : MonoBehaviour
 
                 // Call one of three attack animations "Attack1", "Attack2", "Attack3"
                 m_animator.SetTrigger("Attack1");
+                //aSM.AnimationState.SetAnimation(0, "Walk", false);
             }
             else if (attackStarted && attackElapsedTime > attackDelay)
             {
@@ -729,6 +841,7 @@ public class PlayerController : MonoBehaviour
     {
         return isRightOriented ? attackSensorRight : attackSensorLeft;
     }
+
     void ToggleFreezeXIf(Rigidbody2D rb, bool condition)
     {
         if (condition)
@@ -940,8 +1053,11 @@ public class PlayerController : MonoBehaviour
         //transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         if (!checkDelay || switchTime > switchDelayTime)
         {
+            /*
             if (isRightOriented)
             {
+                //aSM.initialFlipX = true;
+                aSM.skeleton.FlipX = true;
                 GetComponent<SpriteRenderer>().flipX = true;
 
                 m_facingDirection = -1;
@@ -949,13 +1065,15 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-
+                //aSM.initialFlipX = false;
+                aSM.skeleton.FlipX = false;
                 GetComponent<SpriteRenderer>().flipX = false;
 
                 m_facingDirection = 1;
                 isRightOriented = true;
             }
-
+            */
+            FlipX();
             switchTime = 0f;
         }
     }
