@@ -122,6 +122,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!212 &22468473 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3732512736995504455, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+  m_PrefabInstance: {fileID: 985065020}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &49677539 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3285938282832726872, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
@@ -772,6 +777,14 @@ PrefabInstance:
       propertyPath: click
       value: 
       objectReference: {fileID: 49677542}
+    - target: {fileID: 3285938282832726872, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+      propertyPath: baseRenderer
+      value: 
+      objectReference: {fileID: 1464455025}
+    - target: {fileID: 3285938282832726872, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+      propertyPath: pressedRenderer
+      value: 
+      objectReference: {fileID: 1569427522}
     - target: {fileID: 3383543257076158289, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
       propertyPath: m_Size.x
       value: 0.36418098
@@ -787,6 +800,10 @@ PrefabInstance:
     - target: {fileID: 3383543257076158289, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
       propertyPath: m_Offset.y
       value: 2.83035
+      objectReference: {fileID: 0}
+    - target: {fileID: 3732512736995504455, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3910757320902460358, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
       propertyPath: m_Sprite
@@ -1851,6 +1868,14 @@ PrefabInstance:
       propertyPath: click
       value: 
       objectReference: {fileID: 985065021}
+    - target: {fileID: 3285938282832726872, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+      propertyPath: baseRenderer
+      value: 
+      objectReference: {fileID: 1550721667}
+    - target: {fileID: 3285938282832726872, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+      propertyPath: pressedRenderer
+      value: 
+      objectReference: {fileID: 22468473}
     - target: {fileID: 3383543257076158289, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
       propertyPath: m_Size.x
       value: 0.36418098
@@ -2425,10 +2450,20 @@ MonoBehaviour:
   m_MaximumFOV: 60
   m_MinimumOrthoSize: 1
   m_MaximumOrthoSize: 5000
+--- !u!212 &1550721667 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8993951060116184722, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+  m_PrefabInstance: {fileID: 985065020}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1566579436 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1531020978322804756, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
   m_PrefabInstance: {fileID: 3710946858440038901}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1569427522 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3732512736995504455, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+  m_PrefabInstance: {fileID: 515536129}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1590573081
 GameObject:
@@ -2494,6 +2529,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7d87c02f396e0543b18628b8f6444a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &1600574518 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8993951060116184722, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+  m_PrefabInstance: {fileID: 1579454911989983774}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1708949732
 GameObject:
   m_ObjectHideFlags: 0
@@ -2701,6 +2741,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ebc44d9185e465418405f6f9761faf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &1883699481 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3732512736995504455, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+  m_PrefabInstance: {fileID: 1579454911989983774}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2029408532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3281,6 +3326,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button
       objectReference: {fileID: 0}
+    - target: {fileID: 3285938282832726872, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+      propertyPath: baseRenderer
+      value: 
+      objectReference: {fileID: 1600574518}
+    - target: {fileID: 3285938282832726872, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
+      propertyPath: pressedRenderer
+      value: 
+      objectReference: {fileID: 1883699481}
     - target: {fileID: 3383543257076158289, guid: 6c3ad536d610ff04ca0bf8bcf8659c61, type: 3}
       propertyPath: m_Size.x
       value: 0.32258546
@@ -3826,7 +3879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6778679812473361413, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.58
+      value: -8.89
       objectReference: {fileID: 0}
     - target: {fileID: 6790325878025194105, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_Layer
