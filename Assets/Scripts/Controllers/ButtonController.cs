@@ -6,7 +6,12 @@ public class ButtonController : MonoBehaviour
 
     public bool ButtonControllerPressed { get; private set; }
 
+    [Header("Звук")]
     [SerializeField] private AudioSource click;
+
+    [Header("Рендеры кнопки")]
+    [SerializeField] private SpriteRenderer baseRenderer;     // не нажата
+    [SerializeField] private SpriteRenderer pressedRenderer;  // нажата
 
     private bool wasPressedLastFrame = false;
 
@@ -24,26 +29,33 @@ public class ButtonController : MonoBehaviour
         }
 
         ButtonControllerPressed = false;
+        UpdateRender(false); // по умолчанию: не нажата
     }
 
     void Update()
     {
-        if (playerSensor != null)
+        if (playerSensor == null) return;
+
+        bool isPressedNow = playerSensor.State() && playerSensor.myPlayerCollision != null;
+        ButtonControllerPressed = isPressedNow;
+
+        if (!wasPressedLastFrame && isPressedNow)
         {
-            bool isPressedNow = playerSensor.State() && playerSensor.myPlayerCollision != null;
-
-            // Сохраняем состояние
-            ButtonControllerPressed = isPressedNow;
-
-            // Если кнопка была не нажата, а теперь нажата — играем звук
-            if (!wasPressedLastFrame && isPressedNow)
-            {
-                click?.Play();
-                Debug.Log("Кнопка нажата (звук)");
-            }
-
-            // Обновляем состояние для следующего кадра
-            wasPressedLastFrame = isPressedNow;
+            click?.Play();
+            Debug.Log("Кнопка нажата (звук)");
         }
+
+        if (wasPressedLastFrame != isPressedNow)
+        {
+            UpdateRender(isPressedNow);
+        }
+
+        wasPressedLastFrame = isPressedNow;
+    }
+
+    private void UpdateRender(bool pressed)
+    {
+        if (baseRenderer != null) baseRenderer.enabled = !pressed;
+        if (pressedRenderer != null) pressedRenderer.enabled = pressed;
     }
 }

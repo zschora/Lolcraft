@@ -2725,6 +2725,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3534444267945890278, guid: 5400ded3042a5ea44a0adad95f421cc4, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3534444267945890278, guid: 5400ded3042a5ea44a0adad95f421cc4, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3534444267945890278, guid: 5400ded3042a5ea44a0adad95f421cc4, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3846278303453250927, guid: 5400ded3042a5ea44a0adad95f421cc4, type: 3}
       propertyPath: m_Name
       value: Piston
@@ -2880,7 +2892,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4969029062708885078, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5673654133138282934, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_Layer
