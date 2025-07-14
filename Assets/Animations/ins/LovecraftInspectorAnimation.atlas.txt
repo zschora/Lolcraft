@@ -1,0 +1,104 @@
+
+LovecraftInspectorAnimation.png
+size: 2981,817
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+ArmLeft
+  rotate: false
+  xy: 1405, 225
+  size: 203, 590
+  orig: 1082, 1922
+  offset: 164, 656
+  index: -1
+ArmRight
+  rotate: false
+  xy: 1610, 253
+  size: 332, 562
+  orig: 1082, 1922
+  offset: 506, 729
+  index: -1
+Body
+  rotate: true
+  xy: 2, 19
+  size: 796, 827
+  orig: 1082, 1922
+  offset: 161, 550
+  index: -1
+BootLeft
+  rotate: false
+  xy: 2567, 381
+  size: 404, 434
+  orig: 1082, 1922
+  offset: 243, 48
+  index: -1
+BootRight
+  rotate: false
+  xy: 2249, 374
+  size: 316, 441
+  orig: 1082, 1922
+  offset: 733, 44
+  index: -1
+Briefcase
+  rotate: false
+  xy: 1610, 2
+  size: 347, 249
+  orig: 1082, 1922
+  offset: 677, 1560
+  index: -1
+GloveLeft
+  rotate: false
+  xy: 2328, 35
+  size: 242, 337
+  orig: 1082, 1922
+  offset: 166, 431
+  index: -1
+GloveRight
+  rotate: false
+  xy: 1944, 301
+  size: 303, 514
+  orig: 1082, 1922
+  offset: 456, 388
+  index: -1
+Head
+  rotate: false
+  xy: 831, 141
+  size: 393, 674
+  orig: 1082, 1922
+  offset: 195, 1049
+  index: -1
+LegLeft
+  rotate: true
+  xy: 1959, 11
+  size: 288, 367
+  orig: 1082, 1922
+  offset: 411, 403
+  index: -1
+LegRight
+  rotate: true
+  xy: 2572, 44
+  size: 335, 407
+  orig: 1082, 1922
+  offset: 663, 326
+  index: -1
+Tie2
+  rotate: true
+  xy: 831, 19
+  size: 120, 351
+  orig: 1082, 1922
+  offset: 295, 1192
+  index: -1
+Weapon Copy
+  rotate: true
+  xy: 1226, 141
+  size: 674, 177
+  orig: 674, 177
+  offset: 0, 0
+  index: -1
+Zip1
+  rotate: false
+  xy: 1405, 65
+  size: 146, 158
+  orig: 1082, 1922
+  offset: 300, 914
+  index: -1
