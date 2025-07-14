@@ -67,6 +67,7 @@ public class PlayerController : MonoBehaviour
 
     Color currentColor = Color.white;
     [SerializeField] private Transform aMecanimTransform;
+    private bool debug = false;
 
 
     public bool IsGrounded
@@ -90,7 +91,7 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.myPlayers.Contains(this))
         {
             GameManager.Instance.myPlayers.Add(this);
-            Debug.Log($"Игрок добавлен, всего игроков: {GameManager.Instance.myPlayers.Count}");
+            if (debug) Debug.Log($"Игрок добавлен, всего игроков: {GameManager.Instance.myPlayers.Count}");
         }
 
         // m_animator = GetComponent<Animator>();
@@ -140,10 +141,10 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        //Debug.Log("on mouse over");
+        //if (debug) Debug.Log("on mouse over");
         if (Input.GetMouseButtonDown(1))
         {
-            //Debug.Log("takeover");
+            //if (debug) Debug.Log("takeover");
             if (hp < 0.1 || isPlayable)
             {
                 return;
@@ -189,7 +190,7 @@ public class PlayerController : MonoBehaviour
     public void Sleep()
     {
         isSleep = true;
-        //Debug.Log("Уснул");
+        //if (debug) Debug.Log("Уснул");
         ChangeState<PlayerDeathState>();
         //m_animator.SetBool("noBlood", m_noBlood);
         m_animator.SetTrigger("Death");
@@ -202,7 +203,7 @@ public class PlayerController : MonoBehaviour
     public void WakeUp()
     {
         isSleep = false;
-        //Debug.Log("Проснулся");
+        //if (debug) Debug.Log("Проснулся");
         ChangeState<PlayerIdleState>();
         m_animator.SetTrigger("Hurt");
         GetComponent<BoxCollider2D>().size = new Vector2(0.88f, 1.26f);
@@ -220,15 +221,25 @@ public class PlayerController : MonoBehaviour
     private bool Attack()
     {
         var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
+        Debug.Log($"ATTTAACCKKK, myAttackSensor.State(): {myAttackSensor.State()}");
+
         if (myAttackSensor.State())
         {
-            //Debug.Log("Есть враг");
+            Debug.Log($"myAttackSensor.State");
+            //if (debug) Debug.Log("Есть враг");
             var myEnemy = myAttackSensor.myPlayerCollision;
             if (myEnemy is not null && !myEnemy.IsInState<PlayerBlockState>())
             {
+                Debug.Log($"myEnemy is not null && !myEnemy.IsInState<PlayerBlockState>()");
                 if (isPlayable && isRightOriented == myEnemy.isRightOriented) {
+                    Debug.Log($"FLIIIIPPPPPPPP");
+                    //myEnemy.FlipX();
+
+                    myEnemy.isRightOriented = !myEnemy.isRightOriented;
+                    myEnemy.m_facingDirection *= -1;
                     myEnemy.FlipX();
-                    myEnemy.switchTime = 0;
+
+                    myEnemy.switchTime = 100;
                     /*
                     if (myEnemy.isRightOriented)
                     {
@@ -256,7 +267,7 @@ public class PlayerController : MonoBehaviour
                 }
 
                 myEnemy.MinusHP(damage);
-                Debug.Log($"isRightOriented: {isRightOriented}, myEnemy.isRightOriented: {myEnemy.isRightOriented}");
+                if (debug) Debug.Log($"isRightOriented: {isRightOriented}, myEnemy.isRightOriented: {myEnemy.isRightOriented}");
 
                 return true;
             } else
@@ -271,14 +282,14 @@ public class PlayerController : MonoBehaviour
     {
         if (hp < 0.01)
         {
-            //Debug.Log("Уже мертв");
+            //if (debug) Debug.Log("Уже мертв");
             return;
         }
-        //Debug.Log($"ХП до атаки {hp}");
+        //if (debug) Debug.Log($"ХП до атаки {hp}");
         hp = System.Math.Max(0, hp - value);
         bool isDead = CheckDeath();
         CheckMonsterState(isDead);
-        Debug.Log($"Аттака на {value}, осталось {hp}, умер: {isDead}");
+        if (debug) Debug.Log($"Аттака на {value}, осталось {hp}, умер: {isDead}");
 
         /*
         attackFeedbackTimer = 0;
@@ -289,7 +300,7 @@ public class PlayerController : MonoBehaviour
         aChangeColor.B = 0f;
         aChangeColor.A = 1f;
         aChangeColor.Change();
-        //Debug.Log("КРАСНЫЙ");
+        //if (debug) Debug.Log("КРАСНЫЙ");
         */
 
         StartCoroutine(FlashRed());
@@ -342,7 +353,7 @@ public class PlayerController : MonoBehaviour
                 //aSM.Skeleton.SetColor(Color.white);
 
                 colorState = 0;
-                Debug.Log("color state to 0 before death");
+                if (debug) Debug.Log("color state to 0 before death");
             }
 
             return;
@@ -362,7 +373,7 @@ public class PlayerController : MonoBehaviour
                 //aSM.Skeleton.SetColor(Color.yellow);
 
                 colorState = 2;
-                Debug.Log("color state to 2");
+                if (debug) Debug.Log("color state to 2");
             }
 
             return;
@@ -372,7 +383,7 @@ public class PlayerController : MonoBehaviour
             if (colorState != 1)
             {
 
-                Debug.Log("color state to 1");
+                if (debug) Debug.Log("color state to 1");
                 var aChangeColor = new ChangeColor(aSM);
                 aChangeColor.R = 50f / 255f;
                 aChangeColor.G = 250f / 255f;
@@ -388,7 +399,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
         colorState = 0;
-        Debug.Log("БЕЛЫЙ");
+        if (debug) Debug.Log("БЕЛЫЙ");
         var aChangeColor2 = new ChangeColor(aSM);
         aChangeColor2.R = 1f;
         aChangeColor2.G = 1f;
@@ -418,7 +429,7 @@ public class PlayerController : MonoBehaviour
         //GetComponent<BoxCollider2D>().enabled = false;
         if (isOrigin)
         {
-            Debug.Log("ГГ умер");
+            if (debug) Debug.Log("ГГ умер");
             //GameManager.Instance.RestartLevel();
             GameManager.Instance.ShowGameOver();
         }
@@ -430,7 +441,7 @@ public class PlayerController : MonoBehaviour
                 GameManager.Instance.myOriginPlayer.WakeUp();
             } else
             {
-                Debug.Log("ГГ умер не в своем теле");
+                if (debug) Debug.Log("ГГ умер не в своем теле");
                 GameManager.Instance.playerCameraController.ChangeFollow(GameManager.Instance.myOriginPlayer.gameObject);
                 GameManager.Instance.myOriginPlayer.Death(false);
                 GameManager.Instance.myOriginPlayer.isSleep = false;
@@ -439,7 +450,7 @@ public class PlayerController : MonoBehaviour
         }
 
         hp = 0;
-        Debug.Log("Умер");
+        if (debug) Debug.Log("Умер");
         ChangeState<PlayerDeathState>();
 
         if (toAnimate)
@@ -533,9 +544,9 @@ public class PlayerController : MonoBehaviour
         //Check if character just landed on the ground
         if (attackFeedbackTimer > attackFeedback && colorState == 4)
         {
-            //Debug.Log("ИЗМЕНЕНИЕ ЦВЕТА");
+            //if (debug) Debug.Log("ИЗМЕНЕНИЕ ЦВЕТА");
             //CheckMonsterState(false);
-            //Debug.Log("БЕЛЫЙ");
+            //if (debug) Debug.Log("БЕЛЫЙ");
             //var aChangeColor = new ChangeColor(GetComponent<SpriteRenderer>());
             //aChangeColor.R = 1f;
             //aChangeColor.G = 1f;
@@ -558,7 +569,7 @@ public class PlayerController : MonoBehaviour
             m_animator.SetBool("Grounded", m_grounded);
         }
 
-        //Debug.Log($"isPlayable {isPlayable} && isOrigin {isOrigin} && IsInState<PlayerDeathState>() {IsInState<PlayerDeathState>()})");
+        //if (debug) Debug.Log($"isPlayable {isPlayable} && isOrigin {isOrigin} && IsInState<PlayerDeathState>() {IsInState<PlayerDeathState>()})");
 
         if (!isPlayable && !isOrigin && !IsInState<PlayerDeathState>())
         {
@@ -575,7 +586,7 @@ public class PlayerController : MonoBehaviour
         // Check block
         if (IsInState<PlayerBlockState>())
         {
-            Debug.Log($"time in block: {stateMachine.GetCurrentState().ActiveTime}");
+            if (debug) Debug.Log($"time in block: {stateMachine.GetCurrentState().ActiveTime}");
             if (stateMachine.GetCurrentState().ActiveTime > block_time)
             {
                 ChangeState<PlayerIdleState>();
@@ -585,7 +596,7 @@ public class PlayerController : MonoBehaviour
                 aChangeColor.B = currentColor.b;
                 aChangeColor.A = currentColor.a;
                 aChangeColor.Change();
-                Debug.Log($"Check block: {aChangeColor.R}, {aChangeColor.G}, {aChangeColor.B}, {aChangeColor.A}");
+                if (debug) Debug.Log($"Check block: {aChangeColor.R}, {aChangeColor.G}, {aChangeColor.B}, {aChangeColor.A}");
 
                 //var aRenderer = GetComponent<SpriteRenderer>();
                 //var aNewColor = aRenderer.color;
@@ -642,7 +653,7 @@ public class PlayerController : MonoBehaviour
             isRightOriented = false;
         }
 
-        //Debug.Log($"Velocity: {m_body2d.velocity}");
+        //if (debug) Debug.Log($"Velocity: {m_body2d.velocity}");
 
         /*
         //Death
@@ -757,6 +768,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsInState<PlayerAttackState>())
         {
+            Debug.Log($"attackStarted {attackStarted} && attackElapsedTime {attackElapsedTime} > attackDelay {attackElapsedTime}");
             if (!attackStarted && m_timeSinceAttack > attackCooldown)
             {
                 attackStarted = true;
@@ -769,12 +781,14 @@ public class PlayerController : MonoBehaviour
                 m_animator.SetTrigger("Attack1");
                 //aSM.AnimationState.SetAnimation(0, "Walk", false);
             }
-            else if (attackStarted && attackElapsedTime > attackDelay)
-            {
-                attackStarted = false;
-                Attack();
-                ChangeState<PlayerIdleState>();
-            }
+        }
+
+        // check attack
+        if (attackStarted && attackElapsedTime > attackDelay)
+        {
+            attackStarted = false;
+            Attack();
+            ChangeState<PlayerIdleState>();
         }
 
         Animate();
@@ -794,12 +808,12 @@ public class PlayerController : MonoBehaviour
     {
         if (IsInState<PlayerIdleState>())
         {
-            //Debug.Log("Animate PlayerIdleState()");
+            //if (debug) Debug.Log("Animate PlayerIdleState()");
             m_animator.SetInteger("AnimState", 0);
         }
         else if (IsInState<PlayerRunState>())
         {
-            //Debug.Log("Animate PlayerRunState()");
+            //if (debug) Debug.Log("Animate PlayerRunState()");
             m_animator.SetInteger("AnimState", 1);
         }
         /*
@@ -827,7 +841,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Unhandled state in Animate");
+            if (debug) Debug.LogWarning("Unhandled state in Animate");
         }
 
         if (!IsInState<PlayerBlockState>())
@@ -867,59 +881,59 @@ public class PlayerController : MonoBehaviour
         
         float distance;
         bool aPlayerDetected = DetectPlayer(out distance);
-        //Debug.Log($"aPlayerDetected: {aPlayerDetected}");
+        //if (debug) Debug.Log($"aPlayerDetected: {aPlayerDetected}");
 
         bool isAttackEnabled = false;
         var myAttackSensor = isRightOriented ? attackSensorRight : attackSensorLeft;
         //var myAttackSensor = attackSensorRight;
         isAttackEnabled = myAttackSensor.State() && myAttackSensor.myPlayerCollision is not null;
-        //Debug.Log($"myAttackSensor.State(): {myAttackSensor.State()}, && myAttackSensor.myPlayerCollision is not null: {myAttackSensor.myPlayerCollision is not null}");
+        //if (debug) Debug.Log($"myAttackSensor.State(): {myAttackSensor.State()}, && myAttackSensor.myPlayerCollision is not null: {myAttackSensor.myPlayerCollision is not null}");
 
         if (aPlayerDetected && !isAttackEnabled && !IsInState<PlayerRunState>())// && !IsInState<PlayerAttackState>())
         {
             //if (GameManager.Instance.myCurrentMonster is null)
             //{
             //    GameManager.Instance.myCurrentMonster = this;
-            Debug.Log("111111111");
+            if (debug) Debug.Log("111111111");
             ChangeState<PlayerRunState>();
             //}
             //m_delayToIdle = 0.05f;
         } else if (aPlayerDetected && isAttackEnabled && !IsInState<PlayerAttackState>())
         {
-            Debug.Log("2222222222222");
+            if (debug) Debug.Log("2222222222222");
             ChangeState<PlayerAttackState>();
         } else if (!aPlayerDetected && !IsInState<PlayerIdleState>())
         {
-            Debug.Log("3333333333333");
+            if (debug) Debug.Log("3333333333333");
             //if (GameManager.Instance.myCurrentMonster == this)
             //{
             //    GameManager.Instance.myCurrentMonster = null;
             //}
-            //Debug.Log("not player");
+            //if (debug) Debug.Log("not player");
             ChangeState<PlayerIdleState>();
         }
 
         if (IsInState<PlayerIdleState>())
         {
-            Debug.Log("idle");
+            if (debug) Debug.Log("idle");
             SwitchDirection();
         } else if (IsInState<PlayerRunState>())
         {
-            Debug.Log("run");
+            if (debug) Debug.Log("run");
             if (!aPlayerDetected)
             {
-                Debug.Log("NOT DETECTED");
+                if (debug) Debug.Log("NOT DETECTED");
                 ChangeState<PlayerIdleState>();
             } else {
 
                 if (!isAttackEnabled)
                 {
-                    Debug.Log("NOT isAttackEnabled");
+                    if (debug) Debug.Log("NOT isAttackEnabled");
                     m_body2d.velocity = new Vector2(m_facingDirection * m_speed * move_speed, m_body2d.velocity.y);
                 }
                 else
                 {
-                    Debug.Log("stop");
+                    if (debug) Debug.Log("stop");
                     m_body2d.velocity = Vector2.zero;
                     ChangeState<PlayerAttackState>();
                 }
@@ -943,10 +957,10 @@ public class PlayerController : MonoBehaviour
             */
         } else if (IsInState<PlayerAttackState>())
         {
-            //Debug.Log($"Distance: {distance}");
+            //if (debug) Debug.Log($"Distance: {distance}");
             if (!aPlayerDetected || !isAttackEnabled)
             {
-                Debug.Log($"PlayerAttackState TO PlayerIdleState, aPlayerDetected = {aPlayerDetected}, isAttackEnabled = {isAttackEnabled}");
+                if (debug) Debug.Log($"PlayerAttackState TO PlayerIdleState, aPlayerDetected = {aPlayerDetected}, isAttackEnabled = {isAttackEnabled}");
                 //if (GameManager.Instance.myCurrentMonster == this)
                 //{
                 //    GameManager.Instance.myCurrentMonster = null;
@@ -1087,11 +1101,11 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit2D[] hit = Physics2D.RaycastAll(origin, direction, detectionDistance, detectionLayer);
         Debug.DrawRay(origin, direction * detectionDistance, Color.red);
-        //Debug.Log($"Столкновений: {hit.Length}");
+        //if (debug) Debug.Log($"Столкновений: {hit.Length}");
         foreach (var ray in hit)
         {
             if (ray.collider is null || ray.distance < 0.001) continue;
-            //Debug.Log($"Расстояние {ray.distance}");
+            //if (debug) Debug.Log($"Расстояние {ray.distance}");
             
             var aPlayer = ray.collider.gameObject.GetComponent<PlayerController>();
 
@@ -1103,7 +1117,7 @@ public class PlayerController : MonoBehaviour
                     break;
                 }
 
-                //Debug.Log($"Обнаружен плеер на расстоянии {distance}, игрок: {aPlayer.isPlayable}");
+                //if (debug) Debug.Log($"Обнаружен плеер на расстоянии {distance}, игрок: {aPlayer.isPlayable}");
                 return aPlayer.isPlayable;
             }
         }
