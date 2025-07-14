@@ -194,8 +194,8 @@ public class PlayerController : MonoBehaviour
         //m_animator.SetBool("noBlood", m_noBlood);
         m_animator.SetTrigger("Death");
 
-        GetComponent<BoxCollider2D>().size = new Vector2(2.18f, 0.52f);
-        GetComponent<BoxCollider2D>().offset = new Vector2(0f, 0.3f);
+        GetComponent<BoxCollider2D>().size = new Vector2(1.98f, 0.52f);
+        GetComponent<BoxCollider2D>().offset = new Vector2(-0.46f, 0.39f);
         gameObject.layer = LayerMask.NameToLayer("DeadBodies");
     }
 
@@ -205,8 +205,8 @@ public class PlayerController : MonoBehaviour
         //Debug.Log("Проснулся");
         ChangeState<PlayerIdleState>();
         m_animator.SetTrigger("Hurt");
-        GetComponent<BoxCollider2D>().size = new Vector2(0.88f, 1.26f);
-        GetComponent<BoxCollider2D>().offset = new Vector2(0f, 0.68f);
+        GetComponent<BoxCollider2D>().size = new Vector2(0.88f, 1.63f);
+        GetComponent<BoxCollider2D>().offset = new Vector2(0.01f, 0.93f);
         gameObject.layer = LayerMask.NameToLayer("Players");
     }
 
