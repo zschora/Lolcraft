@@ -1879,9 +1879,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3158995540894737778, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4881479641926598159, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.05
+      objectReference: {fileID: 0}
     - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
       propertyPath: m_speed
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: block_time
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: attackDelay
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: attackCooldown
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: min_hp_to_takeover
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
       propertyPath: maxDistanceToAttackDistance
@@ -3462,6 +3486,26 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: block_time
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: attackDelay
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: attackCooldown
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: switchDelayTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
+      propertyPath: min_hp_to_takeover
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516010433554390597, guid: 355722d45b5fb994681c1f939e6e14a4, type: 3}
       propertyPath: maxDistanceToAttackDistance
       value: 100
       objectReference: {fileID: 0}
@@ -4249,7 +4293,7 @@ PrefabInstance:
       objectReference: {fileID: 2053664754}
     - target: {fileID: 7516010433554390597, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: attackDelay
-      value: 0.2
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7516010433554390597, guid: 8fc2204470f9002469dd0ce84e92d148, type: 3}
       propertyPath: min_hp_to_takeover
@@ -4383,7 +4427,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 550754694013845515, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.27
+      value: 3.54
       objectReference: {fileID: 0}
     - target: {fileID: 550754694013845515, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4431,7 +4475,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1099709693841660891, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: pointA.y
-      value: 1.41
+      value: 1.9
       objectReference: {fileID: 0}
     - target: {fileID: 1099709693841660891, guid: d818cc4cf1668044e9a1516116ae051a, type: 3}
       propertyPath: pointB.x

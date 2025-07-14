@@ -226,6 +226,9 @@ public class PlayerController : MonoBehaviour
             var myEnemy = myAttackSensor.myPlayerCollision;
             if (myEnemy is not null && !myEnemy.IsInState<PlayerBlockState>())
             {
+                myEnemy.MinusHP(damage);
+                Debug.Log($"isRightOriented: {isRightOriented}, myEnemy.isRightOriented: {myEnemy.isRightOriented}");
+
                 if (isPlayable && isRightOriented == myEnemy.isRightOriented) {
                     myEnemy.FlipX();
                     myEnemy.switchTime = 0;
@@ -254,9 +257,6 @@ public class PlayerController : MonoBehaviour
                     }
                     */
                 }
-
-                myEnemy.MinusHP(damage);
-                Debug.Log($"isRightOriented: {isRightOriented}, myEnemy.isRightOriented: {myEnemy.isRightOriented}");
 
                 return true;
             } else
