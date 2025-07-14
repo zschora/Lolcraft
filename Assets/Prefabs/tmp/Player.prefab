@@ -63,13 +63,13 @@ MonoBehaviour:
   isOrigin: 0
   damage: 10
   attackCooldown: 1
-  attackDelay: 2
+  attackDelay: 0.5
   attackFeedback: 0.2
   blockCooldown: 1
-  block_time: 0.2
+  block_time: 0.4
   aSM: {fileID: 7540751798824798415}
   switchDelayTime: 1
-  maxDistanceToAttackDistance: 4
+  maxDistanceToAttackDistance: 100
   detectionDistance: 25
   detectionLayer:
     serializedVersion: 2

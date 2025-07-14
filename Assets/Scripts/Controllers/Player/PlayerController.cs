@@ -769,12 +769,14 @@ public class PlayerController : MonoBehaviour
                 m_animator.SetTrigger("Attack1");
                 //aSM.AnimationState.SetAnimation(0, "Walk", false);
             }
-            else if (attackStarted && attackElapsedTime > attackDelay)
-            {
-                attackStarted = false;
-                Attack();
-                ChangeState<PlayerIdleState>();
-            }
+        }
+
+        // check attack
+        if (attackStarted && attackElapsedTime > attackDelay)
+        {
+            attackStarted = false;
+            Attack();
+            ChangeState<PlayerIdleState>();
         }
 
         Animate();
