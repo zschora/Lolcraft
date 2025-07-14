@@ -5,9 +5,18 @@ using UnityEngine.SceneManagement;
 public class UICanvasController : MonoBehaviour
 {
     [Header("Ссылки на UI")]
-    [SerializeField] private GameObject menuPanel; // Канвас с меню
-    private bool isMenuOpen = false;
+    [SerializeField] private GameObject menuPanel;
 
+    [Header("Звук перезапуска")]
+    [SerializeField] private AudioSource restartSound;
+    [SerializeField] private float restartDelay = 1f;
+
+    [Header("Визуальный эффект")]
+    [SerializeField] private GameObject explosionEffectPrefab;
+    [SerializeField] private Vector3 explosionPosition;
+    [SerializeField] private float explosionDelay = 0.3f;
+
+    private bool isMenuOpen = false;
 
     void Update()
     {
@@ -19,23 +28,48 @@ public class UICanvasController : MonoBehaviour
 
     public void RestartLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // Проигрываем звук
+        if (restartSound != null)
+        {
+            restartSound.Play();
+        }
+
+        // Запускаем корутину для взрыва с задержкой
+        if (explosionEffectPrefab != null)
+        {
+            StartCoroutine(PlayExplosionAfterDelay(explosionDelay));
+        }
+
+        // Перезапуск сцены
+        StartCoroutine(RestartWithDelay(restartDelay));
     }
 
-   
+    private System.Collections.IEnumerator PlayExplosionAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        GameObject effect = Instantiate(explosionEffectPrefab, explosionPosition, Quaternion.identity);
+        Animator anim = effect.GetComponent<Animator>();
+        float animDuration = anim != null ? anim.GetCurrentAnimatorStateInfo(0).length : 1f;
+        Destroy(effect, animDuration + 0.1f);
+        if (isMenuOpen)
+            CloseMenu();
+    }
+
+    private System.Collections.IEnumerator RestartWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
     public void ToggleMenu()
     {
         if (menuPanel == null) return;
 
         if (isMenuOpen)
-        {
             CloseMenu();
-        }
         else
-        {
             OpenMenu();
-        }
     }
 
     public void OpenMenu()
@@ -56,14 +90,11 @@ public class UICanvasController : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
     }
 
-
     public void QuitGame()
     {
 #if UNITY_EDITOR
-        // Если в редакторе — просто остановить Play Mode
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-        // Если сборка — закрыть приложение
         Application.Quit();
 #endif
     }

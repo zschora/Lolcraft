@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameManager : Singleton<GameManager>
 {
-    // Состояния игры
     public enum GameState
     {
         MainMenu,
@@ -15,79 +15,63 @@ public class GameManager : Singleton<GameManager>
 
     public PlayerController myOriginPlayer;
     public PlayerController myCurrentPlayer;
-    //public PlayerController myCurrentMonster;
-    public System.Collections.Generic.List<PlayerController> myPlayers = new System.Collections.Generic.List<PlayerController>();
+    public System.Collections.Generic.List<PlayerController> myPlayers = new();
     public GameObject gameOverPanel;
     public Button restartButton;
     public PlayerCameraController playerCameraController;
     public int deadMonsterCount = 0;
 
+    [Header("Эффекты перезапуска")]
+    [SerializeField] private AudioSource restartSound;
+    [SerializeField] private float restartDelay = 1f;
+    [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private Transform explosionSpawnPoint;
 
     private GameState currentState = GameState.MainMenu;
-    
-    // События для подписки других скриптов
-    public delegate void OnStateChanged(GameState newState);
-    public event OnStateChanged onStateChanged;
 
-    
-    // Свойство для получения текущего состояния
-    public GameState CurrentState 
-    { 
-        get { return currentState; }
-    }
-    
+    public GameState CurrentState => currentState;
+
     protected override void Awake()
     {
         base.Awake();
         SceneManager.sceneLoaded += OnSceneLoaded;
         var gameOverCanvas = GameObject.Find("GameOverCanvas");
-        restartButton.onClick.AddListener(RestartLevel);
+        restartButton.onClick.AddListener(RestartWithEffects);
         gameOverPanel.SetActive(true);
         gameOverPanel.SetActive(false);
-
-        //DontDestroyOnLoad(gameOverPanel);
-        //DontDestroyOnLoad(restartButton);
         DontDestroyOnLoad(gameOverCanvas);
     }
-    
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-
-        Debug.Log("OnSceneLoaded" + ((mode == LoadSceneMode.Single) ? "Single" : "Additive"));
+        Debug.Log("OnSceneLoaded: " + scene.name);
     }
 
-    // Изменение состояния игры
     public void ChangeState(GameState newState)
     {
-        if (currentState == newState)
-        {
-            return;
-        }
-        
+        if (currentState == newState) return;
+
         currentState = newState;
-        
-        // Вызываем событие
         onStateChanged?.Invoke(newState);
-        
-        // Логика для каждого состояния
+
         switch (newState)
         {
             case GameState.MainMenu:
                 Time.timeScale = 1f;
                 Debug.Log("Главное меню");
                 break;
-                
+
             case GameState.Playing:
                 Time.timeScale = 1f;
                 Debug.Log("Игра началась");
                 gameOverPanel.SetActive(false);
                 break;
-                
+
             case GameState.Paused:
                 Time.timeScale = 0f;
                 Debug.Log("Игра на паузе");
                 break;
-                
+
             case GameState.GameOver:
                 Time.timeScale = 0f;
                 Debug.Log("Игра окончена");
@@ -95,35 +79,58 @@ public class GameManager : Singleton<GameManager>
                 break;
         }
     }
-    
-    // Базовые методы управления игрой
-    public void StartGame()
+
+    public void StartGame() => ChangeState(GameState.Playing);
+    public void PauseGame() { if (currentState == GameState.Playing) ChangeState(GameState.Paused); }
+    public void ResumeGame() { if (currentState == GameState.Paused) ChangeState(GameState.Playing); }
+    public void GameOver() => ChangeState(GameState.GameOver);
+    public void LoadScene(string sceneName) => SceneManager.LoadScene(sceneName);
+
+    public void RestartWithEffects()
     {
-        ChangeState(GameState.Playing);
+        StartCoroutine(PlayExplosionAndRestart());
     }
-    
-    public void PauseGame()
+
+    private IEnumerator PlayExplosionAndRestart()
     {
-        if (currentState == GameState.Playing)
-            ChangeState(GameState.Paused);
+        // звук
+        if (restartSound != null)
+        {
+            GameObject soundObject = new GameObject("RestartSound");
+            AudioSource tempAudio = soundObject.AddComponent<AudioSource>();
+            tempAudio.clip = restartSound.clip;
+            tempAudio.volume = restartSound.volume;
+            tempAudio.outputAudioMixerGroup = restartSound.outputAudioMixerGroup;
+            tempAudio.Play();
+
+            DontDestroyOnLoad(soundObject);
+            Destroy(soundObject, restartSound.clip.length + 0.1f);
+        }
+
+        // эффект взрыва
+        if (explosionPrefab != null && explosionSpawnPoint != null)
+        {
+            GameObject explosion = Instantiate(explosionPrefab, explosionSpawnPoint.position, Quaternion.identity);
+            DontDestroyOnLoad(explosion);
+
+            Animator anim = explosion.GetComponent<Animator>();
+            if (anim != null)
+            {
+                anim.Play("Explosion");
+                float duration = anim.GetCurrentAnimatorStateInfo(0).length;
+                Destroy(explosion, duration + 0.1f);
+            }
+            else
+            {
+                Destroy(explosion, 1f);
+            }
+        }
+
+        yield return new WaitForSeconds(restartDelay);
+
+        RestartLevel();
     }
-    
-    public void ResumeGame()
-    {
-        if (currentState == GameState.Paused)
-            ChangeState(GameState.Playing);
-    }
-    
-    public void GameOver()
-    {
-        ChangeState(GameState.GameOver);
-    }
-    
-    public void LoadScene(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
-    }
-    
+
     public void RestartLevel()
     {
         myCurrentPlayer = null;
@@ -132,19 +139,13 @@ public class GameManager : Singleton<GameManager>
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         gameOverPanel.SetActive(false);
-        //ChangeState(GameState.Playing);
     }
 
     public void ShowGameOver()
     {
-        if (gameOverPanel is not null)
+        if (gameOverPanel != null)
         {
-            //Debug.Log("ShowGameOver(), gameOverPanel not null");
             gameOverPanel.SetActive(true);
-            //Time.timeScale = 0f; // останавливает игру
-        } else
-        {
-            //Debug.Log("ShowGameOver(), gameOverPanel is null");
         }
     }
 
@@ -152,4 +153,7 @@ public class GameManager : Singleton<GameManager>
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
+
+    public event OnStateChanged onStateChanged;
+    public delegate void OnStateChanged(GameState newState);
 }
