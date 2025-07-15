@@ -78,6 +78,7 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        CheckMonsterState(CheckDeath());
         //aSM.Skeleton.SetColor(Color.red);
         if (isPlayable)
         {
