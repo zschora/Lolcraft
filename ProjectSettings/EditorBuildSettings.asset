@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/tmp level.unity
     guid: 580f80f2446763546ada97af80d9577f
+  - enabled: 1
+    path: Assets/Scenes/tmp level 2.unity
+    guid: 9bfcef8b5df380c4faeacdf2ca5fbd3d
+  - enabled: 1
+    path: Assets/Scenes/tmp tutorial.unity
+    guid: c5e7809551df4e740bfa3e77deca5053
   m_configObjects: {}
