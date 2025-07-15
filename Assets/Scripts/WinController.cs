@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WinController : MonoBehaviour
 {
+    [SerializeField] private string nextSceneName;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +22,8 @@ public class WinController : MonoBehaviour
     {
         if (collision != null)
         {
-            GameManager.Instance.ShowGameOver();
+            //GameManager.Instance.ShowGameOver();
+            GameManager.Instance.LoadScene(nextSceneName);
         }
     }
 }

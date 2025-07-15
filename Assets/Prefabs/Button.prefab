@@ -49,8 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   click: {fileID: 2630630081088523559}
-  baseRenderer: {fileID: 0}
-  pressedRenderer: {fileID: 0}
+  baseRenderer: {fileID: 8993951060116184722}
+  pressedRenderer: {fileID: 3732512736995504455}
 --- !u!82 &2630630081088523559
 AudioSource:
   m_ObjectHideFlags: 0
