@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using Spine.Unity;
+using DG.Tweening;
 
 public class PlayerController : MonoBehaviour
 {
@@ -448,6 +449,7 @@ public class PlayerController : MonoBehaviour
         {
             //m_animator.SetBool("noBlood", m_noBlood);
             m_animator.SetTrigger("Death");
+            aSM.transform.DOMoveY(aSM.transform.position.y - 0.35f, 0.65f);
         }
 
         gameObject.layer = LayerMask.NameToLayer("DeadBodies");
@@ -714,6 +716,7 @@ public class PlayerController : MonoBehaviour
             //m_animator.SetTrigger("Block");
             //m_animator.SetBool("IdleBlock", true);
             m_timeSinceBlock = 0f;
+            attackStarted = false;
         }
 
         /*
