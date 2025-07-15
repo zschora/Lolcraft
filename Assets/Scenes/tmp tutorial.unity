@@ -1581,7 +1581,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 3799c244f51df9a4a8f5ee9a13acf88c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 68ec362083538654f87f83948d837629, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2336,6 +2336,7 @@ MonoBehaviour:
   playerCameraController: {fileID: 0}
   deadMonsterCount: 0
   menuOver: 0
+  menuEntered: 0
 --- !u!4 &1590573083
 Transform:
   m_ObjectHideFlags: 0
