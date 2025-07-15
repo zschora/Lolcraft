@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour
 
         GetComponent<BoxCollider2D>().size = new Vector2(1.98f, 0.52f);
         GetComponent<BoxCollider2D>().offset = new Vector2(-0.46f, 0.39f);
-        gameObject.layer = LayerMask.NameToLayer("DeadBodies");
+        gameObject.layer = LayerMask.NameToLayer("SleepBodies");
     }
 
     public void WakeUp()
@@ -424,8 +424,10 @@ public class PlayerController : MonoBehaviour
         }
         else if (isPlayable)
         {
+            Debug.Log("не ГГ умер");
             if (takeover)
             {
+                Debug.Log("переселение");
                 GameManager.Instance.playerCameraController.ChangeFollow(GameManager.Instance.myOriginPlayer.gameObject);
                 GameManager.Instance.myOriginPlayer.WakeUp();
             } else
@@ -595,7 +597,7 @@ public class PlayerController : MonoBehaviour
 
 
                 var aPos = aMecanimTransform.position;
-                aPos.x += 0.6f;
+                aPos.x += m_facingDirection * 0.6f;
                 aMecanimTransform.position = aPos;
             }
             return;
@@ -702,7 +704,7 @@ public class PlayerController : MonoBehaviour
             //aChangeColor.Change();
 
             var aPos = aMecanimTransform.position;
-            aPos.x -= 0.6f;
+            aPos.x -= m_facingDirection * 0.6f;
             aMecanimTransform.position = aPos;
 
             //var aRenderer = GetComponent<SpriteRenderer>();
