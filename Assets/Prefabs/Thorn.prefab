@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 822200716659618775}
   - component: {fileID: 8677923515274450128}
   - component: {fileID: 6954379191942132491}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PlayerSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
